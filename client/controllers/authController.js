@@ -1,30 +1,35 @@
-app.controller("AuthController", function($scope, authService) {
+app.controller('AuthController', function($scope, $location, AuthService) {
 
-  $scope.user = {};
+    $scope.user = {};
 
-  // REGISTER
-  $scope.register = function() {
-    authService.register($scope.user)
-      .then(res => {
-        alert("Registered successfully");
-      })
-      .catch(err => {
-        alert(err.data.message);
-      });
-  };
+    $scope.login = function() {
+        AuthService.login($scope.user)
+        .then(function(response) {
+            alert("Login successful");
+            $location.path('/home');
+        })
+        .catch(function(error) {
+            alert("Login failed");
+        });
+    };
 
-  // LOGIN
-  $scope.login = function() {
-    authService.login($scope.user)
-      .then(res => {
-        alert("Login successful");
+    $scope.register = function() {
+        AuthService.register($scope.user)
+        .then(function(response) {
+            alert("Registration successful, please login.");
+            $scope.user = {};
+            $location.path('/login');
+        })
+        .catch(function(error) {
+            alert("Registration failed");
+        });
+    };
 
-        // save token
-        localStorage.setItem("token", res.data.token);
-      })
-      .catch(err => {
-        alert(err.data.message);
-      });
-  };
+    $scope.goToRegister = function() {
+        $location.path('/register');
+    };
 
+    $scope.goToLogin = function() {
+        $location.path('/login');
+    };
 });

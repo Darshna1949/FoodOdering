@@ -1,0 +1,37 @@
+<div class="container">
+  
+  <div class="card">
+    
+    <h2>🍔 FoodieHub</h2>
+    <p class="subtitle">Create your account</p>
+
+    <form ng-submit="register()">
+
+      <div class="input-group">
+        <input type="text" ng-model="user.name" required>
+        <label>Full Name</label>
+      </div>
+
+      <div class="input-group">
+        <input type="email" ng-model="user.email" required>
+        <label>Email</label>
+      </div>
+
+      <div class="input-group">
+        <input type="password" ng-model="user.password" required>
+        <label>Password</label>
+      </div>
+
+      <button type="submit" class="btn">Register</button>
+
+    </form>
+
+    <p class="divider">Already have an account?</p>
+
+    <button class="btn login-btn" ng-click="goToLogin()">
+      Login
+    </button>
+
+  </div>
+
+</div>

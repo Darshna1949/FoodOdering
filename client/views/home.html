@@ -1,0 +1,17 @@
+<div class="navbar">
+  <h2>🍔 FoodieHub</h2>
+  <button ng-click="goToCart()">Cart 🛒</button>
+</div>
+
+<div class="food-container">
+
+  <div class="food-card" ng-repeat="item in foods">
+    <img ng-src="{{item.image}}" alt="food">
+
+    <h3>{{item.name}}</h3>
+    <p>₹ {{item.price}}</p>
+
+    <button ng-click="addToCart(item)">Add to Cart</button>
+  </div>
+
+</div>

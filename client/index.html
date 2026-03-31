@@ -1,29 +1,30 @@
 <!DOCTYPE html>
-<html ng-app="foodApp">
+<html lang="en">
 <head>
+  <meta charset="UTF-8">
   <title>Food Ordering</title>
+  <link rel="stylesheet" href="css/style.css">
 </head>
 
-<body ng-app="foodApp" ng-controller="AuthController">
+<body ng-app="foodApp">
 
-  <h2>Register</h2>
-  <input type="text" ng-model="user.name" placeholder="Name"><br>
-  <input type="email" ng-model="user.email" placeholder="Email"><br>
-  <input type="password" ng-model="user.password" placeholder="Password"><br>
-  <button ng-click="register()">Register</button>
+  <div ng-view></div>
 
-  <hr>
-
-  <h2>Login</h2>
-  <input type="email" ng-model="user.email" placeholder="Email"><br>
-  <input type="password" ng-model="user.password" placeholder="Password"><br>
-  <button ng-click="login()">Login</button>
-
-  <!-- scripts -->
+  <!-- AngularJS -->
   <script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.8.2/angular.min.js"></script>
-  <script src="app.js"></script>
-  <script src="services/authService.js"></script>
-  <script src="controllers/authController.js"></script>
+  <script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.8.2/angular-route.js"></script>
 
+  <!-- App -->
+  <script src="app.js"></script>
+
+  <!-- Services -->
+  <script src="services/authService.js"></script>
+  <script src="services/foodService.js"></script>
+
+  <!-- Controllers -->
+  <script src="controllers/authController.js"></script>
+  <script src="controllers/foodController.js"></script>
+  <script src="controllers/cartController.js"></script>
+  
 </body>
 </html>

@@ -1,13 +1,13 @@
-app.service("authService", function($http) {
+app.service('AuthService', function($http) {
 
-  const API = "http://localhost:5000/api/auth";
+    // Express server in server/server.js listens on port 5000 by default
+    var baseUrl = "http://localhost:5000/api/auth";
 
-  this.register = function(user) {
-    return $http.post(API + "/register", user);
-  };
+    this.login = function(user) {
+        return $http.post(baseUrl + "/login", user);
+    };
 
-  this.login = function(user) {
-    return $http.post(API + "/login", user);
-  };
-
+    this.register = function(user) {
+        return $http.post(baseUrl + "/register", user);
+    };
 });
