@@ -16,4 +16,8 @@ app.controller('CartController', function($scope, CartService) {
         }, 0);
     };
 
+    $scope.goToCheckout = function() {
+    window.location.href = "#!/checkout";
+    };
+
 });

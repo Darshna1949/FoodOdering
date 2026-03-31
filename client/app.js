@@ -17,6 +17,10 @@ app.config(function($routeProvider) {
         templateUrl: 'views/cart.html',
         controller: 'CartController'
     })
+    .when('/checkout', {
+    templateUrl: 'views/checkout.html',
+    controller: 'CheckoutController'
+    })
     .otherwise({
         redirectTo: '/home'
     });

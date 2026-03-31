@@ -1,0 +1,61 @@
+<div class="p-6">
+
+  <h2 class="text-2xl font-bold mb-6">Checkout</h2>
+
+  <div class="grid md:grid-cols-2 gap-6">
+
+    <!-- 🔶 Delivery Details -->
+    <div class="bg-white p-6 rounded shadow">
+
+      <h3 class="font-bold mb-4">Delivery Information</h3>
+
+      <input 
+        type="text" 
+        placeholder="Full Name"
+        class="w-full border p-2 mb-3 rounded"
+        ng-model="user.name">
+
+      <input 
+        type="text" 
+        placeholder="Address"
+        class="w-full border p-2 mb-3 rounded"
+        ng-model="user.address">
+
+      <input 
+        type="text" 
+        placeholder="Phone Number"
+        class="w-full border p-2 mb-3 rounded"
+        ng-model="user.phone">
+
+    </div>
+
+    <!-- 🔶 Order Summary -->
+    <div class="bg-white p-6 rounded shadow">
+
+      <h3 class="font-bold mb-4">Order Summary</h3>
+
+      <div ng-repeat="item in cart" class="flex justify-between mb-2">
+        <span>{{item.name}} x{{item.quantity}}</span>
+        <span>₹ {{item.price * item.quantity}}</span>
+      </div>
+
+      <hr class="my-3">
+
+      <p>Subtotal: ₹ {{getTotal()}}</p>
+      <p>Tax (10%): ₹ {{getTotal() * 0.1}}</p>
+
+      <p class="font-bold text-lg mt-2">
+        Total: ₹ {{getTotal() * 1.1}}
+      </p>
+
+      <button 
+        class="w-full mt-4 bg-green-500 text-white py-2 rounded hover:bg-green-600"
+        ng-click="placeOrder()">
+        Place Order
+      </button>
+
+    </div>
+
+  </div>
+
+</div>
