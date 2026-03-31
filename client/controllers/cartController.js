@@ -1,4 +1,4 @@
-app.controller('CartController', function($scope, CartService) {
+app.controller('CartController', function($scope, CartService, AuthService, $location) {
 
     $scope.cart = CartService.getCart();
 
@@ -17,7 +17,13 @@ app.controller('CartController', function($scope, CartService) {
     };
 
     $scope.goToCheckout = function() {
-    window.location.href = "#!/checkout";
+        if (!AuthService.isAuthenticated()) {
+            alert("Please login before proceeding to checkout");
+            $location.path('/login');
+            return;
+        }
+
+        $location.path('/checkout');
     };
 
 });

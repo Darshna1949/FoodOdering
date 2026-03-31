@@ -10,6 +10,12 @@ app.service('CartService', function() {
         return cart;
     };
 
+    this.getCartCount = function() {
+        return cart.reduce(function(total, item) {
+            return total + (item.quantity || 0);
+        }, 0);
+    };
+
     this.addToCart = function(item) {
         var existing = cart.find(c => c.name === item.name);
 
@@ -35,6 +41,11 @@ app.service('CartService', function() {
             cart.splice(index, 1);
         }
 
+        saveCart();
+    };
+
+    this.clearCart = function() {
+        cart.length = 0;
         saveCart();
     };
 

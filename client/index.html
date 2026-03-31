@@ -7,9 +7,72 @@
   <!-- 🔥 Tailwind CSS -->
   <script src="https://cdn.tailwindcss.com"></script>
 
+  <style>
+    .toast-enter {
+      opacity: 0;
+      transform: translateY(-10px);
+    }
+    .toast-enter-active {
+      opacity: 1;
+      transform: translateY(0);
+      transition: opacity 0.2s ease, transform 0.2s ease;
+    }
+  </style>
+
 </head>
 
-<body ng-app="foodApp">
+<body ng-app="foodApp" ng-controller="NavController" class="relative">
+
+  <!-- Toast Notification -->
+  <div ng-if="toast.visible"
+       class="fixed top-6 right-6 z-50 max-w-sm text-sm md:text-base"
+       ng-class="{
+         'bg-green-500': toast.type === 'success',
+         'bg-red-500': toast.type === 'error',
+         'bg-gray-900': !toast.type || (toast.type !== 'success' && toast.type !== 'error')
+       }">
+    <div class="flex items-center gap-3 px-5 py-4 rounded-2xl shadow-2xl text-white bg-opacity-90 backdrop-blur-sm">
+      <div class="flex-1">
+        <p class="font-semibold tracking-wide">{{toast.message}}</p>
+      </div>
+    </div>
+  </div>
+
+  <!-- Navbar -->
+  <div class="flex justify-between items-center px-6 py-4 bg-white shadow">
+    <h2 class="text-xl font-bold text-orange-500 cursor-pointer" ng-click="goHome()">🍔 FoodieHub</h2>
+
+    <div class="flex items-center">
+      <!-- Home Button -->
+      <button class="mr-4 text-sm font-medium text-gray-700 hover:text-orange-500" ng-click="goHome()">
+        Home
+      </button>
+
+      <div class="relative mr-4">
+        <button class="text-xl" ng-click="goToCart()">🛒</button>
+        <span 
+          ng-if="cartCount > 0"
+          class="absolute -top-1 -right-2 bg-red-500 text-white text-xs rounded-full px-1">
+          {{cartCount}}
+        </span>
+      </div>
+
+      <!-- Show Login before auth, Profile icon after auth -->
+      <button 
+        ng-if="!isLoggedIn"
+        class="bg-black text-white px-4 py-1 rounded" 
+        ng-click="goToLogin()">
+        Login
+      </button>
+
+      <button 
+        ng-if="isLoggedIn"
+        class="w-9 h-9 flex items-center justify-center rounded-full bg-gray-200 text-gray-800 text-lg" 
+        ng-click="goToProfile()">
+        👤
+      </button>
+    </div>
+  </div>
 
   <!-- Angular View -->
   <div ng-view></div>
@@ -25,12 +88,16 @@
   <script src="services/authService.js"></script>
   <script src="services/foodService.js"></script>
   <script src="services/cartService.js"></script>
+  <script src="services/toastService.js"></script>
 
   <!-- 🔹 Controllers -->
+  <script src="controllers/navController.js"></script>
   <script src="controllers/authController.js"></script>
   <script src="controllers/foodController.js"></script>
   <script src="controllers/cartController.js"></script>
   <script src="controllers/checkoutController.js"></script>
+  <script src="controllers/profileController.js"></script>
+  <script src="controllers/orderController.js"></script>
 
 </body>
 </html>

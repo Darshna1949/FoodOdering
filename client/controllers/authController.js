@@ -6,6 +6,10 @@ app.controller('AuthController', function($scope, $location, AuthService) {
     $scope.login = function() {
         AuthService.login($scope.user)
         .then(function(res) {
+            // Save JWT token so we know user is logged in
+            if (res.data && res.data.token) {
+                AuthService.setToken(res.data.token);
+            }
             alert("Login successful");
             $location.path('/home');
         })

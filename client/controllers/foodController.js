@@ -1,9 +1,11 @@
-app.controller('FoodController', function($scope, $location, FoodService, CartService) {
+app.controller('FoodController', function($scope, $location, FoodService, CartService, AuthService, ToastService) {
 
     $scope.foods = [];
     $scope.allFoods = [];
     $scope.searchText = "";
     $scope.activeCategory = "All";
+    $scope.cartCount = CartService.getCartCount();
+    $scope.isLoggedIn = AuthService.isAuthenticated();
 
     function getImage(name, backendImage) {
         // Prefer backend image if it's a valid URL, otherwise fallback to Unsplash
@@ -40,8 +42,15 @@ app.controller('FoodController', function($scope, $location, FoodService, CartSe
         });
 
     $scope.addToCart = function(item) {
+        if (!AuthService.isAuthenticated()) {
+            ToastService.error("Please login to add items to cart");
+            $location.path('/login');
+            return;
+        }
+
         CartService.addToCart(item);
-        alert(item.name + " added to cart");
+        $scope.cartCount = CartService.getCartCount();
+        ToastService.success(item.name + " added to cart");
     };
 
     $scope.goToCart = function() {
@@ -50,6 +59,10 @@ app.controller('FoodController', function($scope, $location, FoodService, CartSe
 
     $scope.goToLogin = function() {
         $location.path('/login');
+    };
+
+    $scope.goToProfile = function() {
+        $location.path('/profile');
     };
 
     function applyFilters() {

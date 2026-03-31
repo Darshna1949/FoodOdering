@@ -10,4 +10,20 @@ app.service('AuthService', function($http) {
     this.register = function(user) {
         return $http.post(baseUrl + "/register", user);
     };
+
+    this.setToken = function(token) {
+        localStorage.setItem('token', token);
+    };
+
+    this.getToken = function() {
+        return localStorage.getItem('token');
+    };
+
+    this.isAuthenticated = function() {
+        return !!localStorage.getItem('token');
+    };
+
+    this.logout = function() {
+        localStorage.removeItem('token');
+    };
 });
