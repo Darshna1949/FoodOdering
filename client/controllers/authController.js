@@ -5,6 +5,10 @@ app.controller('AuthController', function($scope, $location, AuthService) {
     $scope.login = function() {
         AuthService.login($scope.user)
         .then(function(response) {
+            // save token for authenticated requests (cart, orders, etc.)
+            if (response.data && response.data.token) {
+                localStorage.setItem('token', response.data.token);
+            }
             alert("Login successful");
             $location.path('/home');
         })

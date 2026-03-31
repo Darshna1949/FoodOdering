@@ -1,4 +1,17 @@
 <div class="container">
-  <h2>🛒 Your Cart</h2>
-  <p>No items yet</p>
+  <div class="card" style="width: 400px; text-align: left;">
+    <h2>🛒 Your Cart</h2>
+
+    <div ng-if="!cartItems.length">
+      <p>No items yet</p>
+    </div>
+
+    <div ng-if="cartItems.length">
+      <div ng-repeat="item in cartItems" style="margin-bottom: 10px;">
+        <strong>{{item.foodId.name}}</strong>
+        <span> - Qty: {{item.quantity}}</span>
+      </div>
+    </div>
+
+  </div>
 </div>

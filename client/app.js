@@ -16,7 +16,7 @@ app.config(function($routeProvider) {
     })
     .when('/cart', {
         templateUrl: 'views/cart.html',
-        controller: 'FoodController'
+        controller: 'CartController'
     })
     .otherwise({
         redirectTo: '/login'
