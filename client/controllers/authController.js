@@ -1,39 +1,28 @@
 app.controller('AuthController', function($scope, $location, AuthService) {
 
     $scope.user = {};
+    $scope.isLogin = true; // default tab
 
     $scope.login = function() {
         AuthService.login($scope.user)
-        .then(function(response) {
-            // save token for authenticated requests (cart, orders, etc.)
-            if (response.data && response.data.token) {
-                localStorage.setItem('token', response.data.token);
-            }
+        .then(function(res) {
             alert("Login successful");
             $location.path('/home');
         })
-        .catch(function(error) {
+        .catch(function(err) {
             alert("Login failed");
         });
     };
 
     $scope.register = function() {
         AuthService.register($scope.user)
-        .then(function(response) {
-            alert("Registration successful, please login.");
-            $scope.user = {};
-            $location.path('/login');
+        .then(function(res) {
+            alert("Registration successful");
+            $scope.isLogin = true; // switch to login
         })
-        .catch(function(error) {
+        .catch(function(err) {
             alert("Registration failed");
         });
     };
 
-    $scope.goToRegister = function() {
-        $location.path('/register');
-    };
-
-    $scope.goToLogin = function() {
-        $location.path('/login');
-    };
 });

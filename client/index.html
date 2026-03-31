@@ -2,30 +2,34 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8">
-  <title>Food Ordering</title>
-  <link rel="stylesheet" href="css/style.css">
+  <title>FoodieHub</title>
+
+  <!-- 🔥 Tailwind CSS -->
+  <script src="https://cdn.tailwindcss.com"></script>
+
 </head>
 
 <body ng-app="foodApp">
 
+  <!-- Angular View -->
   <div ng-view></div>
 
-  <!-- AngularJS -->
+  <!-- 🔹 AngularJS -->
   <script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.8.2/angular.min.js"></script>
   <script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.8.2/angular-route.js"></script>
 
-  <!-- App -->
+  <!-- 🔹 App -->
   <script src="app.js"></script>
 
-  <!-- Services -->
+  <!-- 🔹 Services -->
   <script src="services/authService.js"></script>
   <script src="services/foodService.js"></script>
   <script src="services/cartService.js"></script>
 
-  <!-- Controllers -->
+  <!-- 🔹 Controllers -->
   <script src="controllers/authController.js"></script>
   <script src="controllers/foodController.js"></script>
   <script src="controllers/cartController.js"></script>
-  
+
 </body>
 </html>

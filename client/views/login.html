@@ -1,30 +1,78 @@
-<div class="container">
-  
-  <div class="card">
-    
-    <h2>🍔 FoodieHub</h2>
-    <p class="subtitle">Login to continue</p>
+<div class="flex items-center justify-center h-screen bg-gray-100">
 
-    <form ng-submit="login()">
-      
-      <div class="input-group">
-        <input type="email" ng-model="user.email" required>
-        <label>Email</label>
+  <div class="bg-white p-6 rounded-xl shadow w-96">
+
+    <!-- Logo -->
+    <div class="flex justify-center mb-3">
+      <div class="bg-orange-500 text-white w-10 h-10 flex items-center justify-center rounded-full">
+        F
       </div>
+    </div>
 
-      <div class="input-group">
-        <input type="password" ng-model="user.password" required>
-        <label>Password</label>
-      </div>
+    <!-- Title -->
+    <h2 class="text-center text-xl font-bold mb-1">
+      Welcome to FoodieHub
+    </h2>
+    <p class="text-center text-gray-500 text-sm mb-4">
+      Login or create an account to continue
+    </p>
 
-      <button type="submit" class="btn">Login</button>
+    <!-- Tabs -->
+    <div class="flex bg-gray-200 rounded mb-4">
+      <button 
+        class="w-1/2 py-2 rounded"
+        ng-class="{'bg-white shadow': isLogin}"
+        ng-click="isLogin = true">
+        Login
+      </button>
+
+      <button 
+        class="w-1/2 py-2 rounded"
+        ng-class="{'bg-white shadow': !isLogin}"
+        ng-click="isLogin = false">
+        Register
+      </button>
+    </div>
+
+    <!-- 🔐 LOGIN FORM -->
+    <form ng-show="isLogin" ng-submit="login()">
+
+      <input type="email" placeholder="Email"
+        class="w-full border p-2 mb-3 rounded"
+        ng-model="user.email" required>
+
+      <input type="password" placeholder="Password"
+        class="w-full border p-2 mb-3 rounded"
+        ng-model="user.password" required>
+
+      <button 
+        class="w-full bg-orange-500 text-white py-2 rounded hover:bg-orange-600">
+        Login
+      </button>
+
     </form>
 
-    <p class="divider">OR</p>
+    <!-- 📝 REGISTER FORM -->
+    <form ng-show="!isLogin" ng-submit="register()">
 
-    <button class="btn register-btn" ng-click="goToRegister()">
-      Create Account
-    </button>
+      <input type="text" placeholder="Full Name"
+        class="w-full border p-2 mb-3 rounded"
+        ng-model="user.name" required>
+
+      <input type="email" placeholder="Email"
+        class="w-full border p-2 mb-3 rounded"
+        ng-model="user.email" required>
+
+      <input type="password" placeholder="Password"
+        class="w-full border p-2 mb-3 rounded"
+        ng-model="user.password" required>
+
+      <button 
+        class="w-full bg-green-500 text-white py-2 rounded hover:bg-green-600">
+        Create Account
+      </button>
+
+    </form>
 
   </div>
 

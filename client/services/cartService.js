@@ -1,37 +1,41 @@
-app.service('CartService', function($http) {
+app.service('CartService', function() {
 
-	var baseUrl = "http://localhost:5000/api/cart";
+    var cart = JSON.parse(localStorage.getItem('cart')) || [];
 
-	function getAuthHeaders() {
-		var token = localStorage.getItem('token');
-		return token ? { Authorization: token } : {};
-	}
+    function saveCart() {
+        localStorage.setItem('cart', JSON.stringify(cart));
+    }
 
-	this.addToCart = function(foodId) {
-		return $http.post(baseUrl + "/add", { foodId: foodId }, {
-			headers: getAuthHeaders()
-		});
-	};
+    this.getCart = function() {
+        return cart;
+    };
 
-	this.getCart = function() {
-		return $http.get(baseUrl + "/", {
-			headers: getAuthHeaders()
-		});
-	};
+    this.addToCart = function(item) {
+        var existing = cart.find(c => c.name === item.name);
 
-	this.updateQuantity = function(foodId, quantity) {
-		return $http.put(baseUrl + "/update", { foodId: foodId, quantity: quantity }, {
-			headers: getAuthHeaders()
-		});
-	};
+        if (existing) {
+            existing.quantity++;
+        } else {
+            item.quantity = 1;
+            cart.push(item);
+        }
 
-	this.removeItem = function(foodId) {
-		return $http({
-			method: 'DELETE',
-			url: baseUrl + "/remove",
-			data: { foodId: foodId },
-			headers: Object.assign({ 'Content-Type': 'application/json' }, getAuthHeaders())
-		});
-	};
+        saveCart();
+    };
+
+    this.removeItem = function(index) {
+        cart.splice(index, 1);
+        saveCart();
+    };
+
+    this.updateQuantity = function(index, change) {
+        cart[index].quantity += change;
+
+        if (cart[index].quantity <= 0) {
+            cart.splice(index, 1);
+        }
+
+        saveCart();
+    };
+
 });
-

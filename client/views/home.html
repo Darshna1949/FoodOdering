@@ -1,17 +1,96 @@
-<div class="navbar">
-  <h2>🍔 FoodieHub</h2>
-  <button ng-click="goToCart()">Cart 🛒</button>
-</div>
+<div>
 
-<div class="food-container">
+  <!-- 🔶 Navbar -->
+  <div class="flex justify-between items-center px-6 py-4 bg-white shadow">
+    <h2 class="text-xl font-bold text-orange-500">🍔 FoodieHub</h2>
 
-  <div class="food-card" ng-repeat="item in foods">
-    <img ng-src="{{item.image}}" alt="food">
+    <div>
+      <button class="mr-4 text-xl" ng-click="goToCart()">🛒</button>
+      <button class="bg-black text-white px-4 py-1 rounded" ng-click="goToLogin()">Login</button>
+    </div>
+  </div>
 
-    <h3>{{item.name}}</h3>
-    <p>₹ {{item.price}}</p>
+  <!-- 🔶 Hero -->
+  <div class="bg-orange-500 text-white text-center py-12">
+    <h1 class="text-3xl font-bold mb-3">
+      Delicious Food Delivered to Your Door
+    </h1>
 
-    <button ng-click="addToCart(item)">Add to Cart</button>
+    <p class="mb-5">Order from our wide selection of meals</p>
+
+    <input 
+      type="text"
+      placeholder="Search for dishes..."
+      class="w-1/2 p-3 rounded text-black"
+      ng-model="searchText"
+      ng-change="onSearchChange()">
+  </div>
+
+  <!-- 🔶 Categories -->
+  <div class="flex gap-3 px-6 py-4 overflow-x-auto">
+    <button 
+      class="px-3 py-1 rounded"
+      ng-class="activeCategory === 'All' ? 'bg-orange-500 text-white' : 'bg-gray-200'"
+      ng-click="setCategory('All')">
+      All
+    </button>
+    <button 
+      class="px-3 py-1 rounded"
+      ng-class="activeCategory === 'Pizza' ? 'bg-orange-500 text-white' : 'bg-gray-200'"
+      ng-click="setCategory('Pizza')">
+      Pizza
+    </button>
+    <button 
+      class="px-3 py-1 rounded"
+      ng-class="activeCategory === 'Burgers' ? 'bg-orange-500 text-white' : 'bg-gray-200'"
+      ng-click="setCategory('Burgers')">
+      Burgers
+    </button>
+    <button 
+      class="px-3 py-1 rounded"
+      ng-class="activeCategory === 'Desserts' ? 'bg-orange-500 text-white' : 'bg-gray-200'"
+      ng-click="setCategory('Desserts')">
+      Desserts
+    </button>
+    <button 
+      class="px-3 py-1 rounded"
+      ng-class="activeCategory === 'Beverages' ? 'bg-orange-500 text-white' : 'bg-gray-200'"
+      ng-click="setCategory('Beverages')">
+      Beverages
+    </button>
+  </div>
+
+  <!-- 🔶 Food Grid -->
+  <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-6 px-6 pb-10">
+
+    <div 
+      class="bg-white rounded-xl shadow p-4"
+      ng-repeat="item in foods">
+
+      <img 
+        ng-src="{{item.image}}" 
+        class="w-full h-40 object-cover rounded">
+
+      <h3 class="mt-3 font-semibold text-lg">
+        {{item.name}}
+      </h3>
+
+      <p class="text-gray-500 text-sm">
+        {{item.description}}
+      </p>
+
+      <p class="text-orange-500 font-bold mt-1">
+        ₹ {{item.price}}
+      </p>
+
+      <button 
+        class="mt-3 w-full bg-orange-500 text-white py-2 rounded hover:bg-orange-600"
+        ng-click="addToCart(item)">
+        + Add to Cart
+      </button>
+
+    </div>
+
   </div>
 
 </div>

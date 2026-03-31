@@ -2,14 +2,13 @@ var app = angular.module('foodApp', ['ngRoute']);
 
 app.config(function($routeProvider) {
     $routeProvider
+    .when('/', {
+        redirectTo: '/home'
+    })
     .when('/login', {
         templateUrl: 'views/login.html',
         controller: 'AuthController'
     })
-    .when('/register', {
-    templateUrl: 'views/register.html',
-    controller: 'AuthController'
-    }) 
     .when('/home', {
         templateUrl: 'views/home.html',
         controller: 'FoodController'
@@ -19,6 +18,6 @@ app.config(function($routeProvider) {
         controller: 'CartController'
     })
     .otherwise({
-        redirectTo: '/login'
+        redirectTo: '/home'
     });
 });
