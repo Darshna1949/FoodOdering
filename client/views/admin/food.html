@@ -1,0 +1,98 @@
+<div>
+
+  <div class="flex justify-between items-center mb-6">
+    <h1 class="text-2xl font-bold">Manage Food Items</h1>
+
+    <button 
+      class="bg-orange-500 text-white px-4 py-2 rounded"
+      ng-click="foodAdmin.showForm = true">
+      + Add Food Item
+    </button>
+  </div>
+
+  <!-- 🔍 Search -->
+  <input 
+    type="text"
+    placeholder="Search food..."
+    class="w-full border p-2 mb-4 rounded"
+    ng-model="foodAdmin.searchText">
+
+  <!-- 📋 Table -->
+  <div class="bg-white rounded shadow overflow-hidden">
+
+    <table class="w-full">
+
+      <thead class="bg-gray-100">
+        <tr>
+          <th class="p-3">Name</th>
+          <th>Category</th>
+          <th>Price</th>
+          <th>Type</th>
+          <th>Actions</th>
+        </tr>
+      </thead>
+
+      <tbody>
+        <tr 
+          ng-repeat="item in foodAdmin.foods | filter:foodAdmin.searchText"
+          class="border-t">
+
+          <td class="p-3">{{item.name}}</td>
+          <td>{{item.category}}</td>
+          <td>₹ {{item.price}}</td>
+          <td>{{item.type}}</td>
+
+          <td class="space-x-2">
+            <button 
+              class="text-blue-500"
+              ng-click="editItem(item)">
+              ✏️
+            </button>
+
+            <button 
+              class="text-red-500"
+              ng-click="deleteItem($index)">
+              🗑
+            </button>
+          </td>
+
+        </tr>
+      </tbody>
+
+    </table>
+
+  </div>
+
+  <!-- ➕ Add/Edit Form -->
+  <div 
+    ng-if="foodAdmin.showForm"
+    class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center">
+
+    <div class="bg-white p-6 rounded w-96">
+
+      <h2 class="font-bold mb-4">Add Food Item</h2>
+
+      <input class="w-full border p-2 mb-2" placeholder="Name" ng-model="foodAdmin.food.name">
+      <input class="w-full border p-2 mb-2" placeholder="Category" ng-model="foodAdmin.food.category">
+      <input class="w-full border p-2 mb-2" placeholder="Price" ng-model="foodAdmin.food.price">
+      <input class="w-full border p-2 mb-2" placeholder="Type (Veg/Non-Veg)" ng-model="foodAdmin.food.type">
+
+      <div class="flex justify-between mt-4">
+        <button 
+          class="bg-gray-300 px-3 py-1 rounded"
+          ng-click="cancelEdit()">
+          Cancel
+        </button>
+
+        <button 
+          class="bg-orange-500 text-white px-3 py-1 rounded"
+          ng-click="saveFood()">
+          {{ foodAdmin.editIndex !== undefined && foodAdmin.editIndex !== null ? 'Update' : 'Add' }}
+        </button>
+      </div>
+
+    </div>
+
+  </div>
+
+</div>

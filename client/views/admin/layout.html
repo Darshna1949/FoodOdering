@@ -1,0 +1,53 @@
+<div class="flex h-screen bg-gray-100">
+
+  <!-- 🔶 Sidebar -->
+  <div class="w-64 bg-gray-900 text-white flex flex-col">
+
+    <div class="p-4 text-xl font-bold border-b border-gray-700">
+      🅰 Admin Panel
+    </div>
+
+    <div class="flex-1 p-4 space-y-2">
+
+      <button  ng-click="setPage('dashboard')" class="block w-full text-left px-3 py-2 rounded bg-orange-500">
+        Dashboard
+      </button>
+
+      <button ng-click="setPage('food')" class="block w-full text-left px-3 py-2 hover:bg-gray-700 rounded">
+        Food Items
+      </button>
+
+      <button ng-click="setPage('users')" class="block w-full text-left px-3 py-2 hover:bg-gray-700 rounded">
+        Users
+      </button>
+
+      <button ng-click="setPage('orders')" class="block w-full text-left px-3 py-2 hover:bg-gray-700 rounded">
+        Orders
+      </button>
+
+      <button ng-click="setPage('reports')" class="block w-full text-left px-3 py-2 hover:bg-gray-700 rounded">
+        Reports
+      </button>
+
+    </div>
+
+    <div class="p-4 border-t border-gray-700">
+      <button ng-click="setPage('user-view')" class="block w-full text-left">User View</button>
+      <button ng-click="logout()" class="block w-full text-left mt-2">Logout</button>
+    </div>
+
+  </div>
+
+  <!-- 🔶 Main Content -->
+  <div class="flex-1 p-6">
+
+    <h2 class="text-2xl font-bold mb-4">
+      Welcome, Admin User
+    </h2>
+
+    <!-- Dynamic content -->
+    <div ng-include="currentPage"></div>
+
+  </div>
+
+</div>

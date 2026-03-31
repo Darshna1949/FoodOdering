@@ -1,0 +1,57 @@
+<div>
+
+  <h1 class="text-2xl font-bold mb-6">Reports & Analytics</h1>
+
+  <!-- 🔢 Stats -->
+  <div class="grid grid-cols-1 md:grid-cols-3 gap-6 mb-6">
+
+    <div class="bg-white p-4 rounded shadow">
+      <p class="text-gray-500">Total Revenue</p>
+      <h2 class="text-2xl font-bold text-green-600">
+        ₹ {{getRevenue()}}
+      </h2>
+    </div>
+
+    <div class="bg-white p-4 rounded shadow">
+      <p class="text-gray-500">Total Orders</p>
+      <h2 class="text-2xl font-bold">
+        {{getTotalOrders()}}
+      </h2>
+    </div>
+
+    <div class="bg-white p-4 rounded shadow">
+      <p class="text-gray-500">Top Item</p>
+      <h2 class="text-xl font-bold">
+        {{getTopItems()[0].name || 'N/A'}}
+      </h2>
+    </div>
+
+  </div>
+
+  <!-- 📊 Top Selling Items -->
+  <div class="bg-white p-6 rounded shadow">
+
+    <h3 class="font-bold mb-4">Top Selling Items</h3>
+
+    <div 
+      ng-repeat="item in getTopItems()"
+      class="mb-3">
+
+      <div class="flex justify-between text-sm mb-1">
+        <span>{{item.name}}</span>
+        <span>{{item.qty}}</span>
+      </div>
+
+      <!-- Fake Bar Chart -->
+      <div class="w-full bg-gray-200 h-3 rounded">
+        <div 
+          class="bg-orange-500 h-3 rounded"
+          ng-style="{'width': (item.qty * 20) + '%'}">
+        </div>
+      </div>
+
+    </div>
+
+  </div>
+
+</div>

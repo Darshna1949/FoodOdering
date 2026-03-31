@@ -29,6 +29,10 @@ app.config(function($routeProvider) {
     templateUrl: 'views/orders.html',
     controller: 'OrderController'
     })
+    .when('/admin', {
+    templateUrl: 'views/admin/layout.html',
+    controller: 'AdminController'
+    })
     .otherwise({
         redirectTo: '/home'
     });
