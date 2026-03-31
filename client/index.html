@@ -38,8 +38,8 @@
     </div>
   </div>
 
-  <!-- Navbar -->
-  <div class="flex justify-between items-center px-6 py-4 bg-white shadow">
+  <!-- Navbar (hidden on login/register page) -->
+  <div class="flex justify-between items-center px-6 py-4 bg-white shadow" ng-if="shouldShowNavbar()">
     <h2 class="text-xl font-bold text-orange-500 cursor-pointer" ng-click="goHome()">🍔 FoodieHub</h2>
 
     <div class="flex items-center">
@@ -57,7 +57,7 @@
         </span>
       </div>
 
-      <!-- Show Login before auth, Profile icon after auth -->
+      <!-- Show Login before auth, Profile dropdown after auth -->
       <button 
         ng-if="!isLoggedIn"
         class="bg-black text-white px-4 py-1 rounded" 
@@ -65,12 +65,33 @@
         Login
       </button>
 
-      <button 
-        ng-if="isLoggedIn"
-        class="w-9 h-9 flex items-center justify-center rounded-full bg-gray-200 text-gray-800 text-lg" 
-        ng-click="goToProfile()">
-        👤
-      </button>
+      <div class="relative" ng-if="isLoggedIn">
+        <button 
+          class="w-9 h-9 flex items-center justify-center rounded-full bg-gray-200 text-gray-800 text-lg" 
+          ng-click="toggleProfileMenu()">
+          👤
+        </button>
+
+        <div 
+          class="absolute right-0 mt-2 w-44 bg-white border border-gray-200 rounded-lg shadow-lg z-30"
+          ng-show="showProfileMenu">
+          <button 
+            class="block w-full text-left px-4 py-2 text-sm text-gray-700 hover:bg-gray-100" 
+            ng-click="goToProfile()">
+            Profile
+          </button>
+          <button 
+            class="block w-full text-left px-4 py-2 text-sm text-gray-700 hover:bg-gray-100" 
+            ng-click="goToOrders()">
+            Order History
+          </button>
+          <button 
+            class="block w-full text-left px-4 py-2 text-sm text-red-600 hover:bg-gray-100" 
+            ng-click="logout()">
+            Logout
+          </button>
+        </div>
+      </div>
     </div>
   </div>
 

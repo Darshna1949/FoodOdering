@@ -1,4 +1,4 @@
-app.controller('AuthController', function($scope, $location, AuthService) {
+app.controller('AuthController', function($scope, $location, AuthService, ToastService) {
 
     $scope.user = {};
     $scope.isLogin = true; // default tab
@@ -10,22 +10,22 @@ app.controller('AuthController', function($scope, $location, AuthService) {
             if (res.data && res.data.token) {
                 AuthService.setToken(res.data.token);
             }
-            alert("Login successful");
+            ToastService.success("Login successful");
             $location.path('/home');
         })
         .catch(function(err) {
-            alert("Login failed");
+            ToastService.error("Login failed. Please check your credentials.");
         });
     };
 
     $scope.register = function() {
         AuthService.register($scope.user)
         .then(function(res) {
-            alert("Registration successful");
+            ToastService.success("Registration successful. You can now log in.");
             $scope.isLogin = true; // switch to login
         })
         .catch(function(err) {
-            alert("Registration failed");
+            ToastService.error("Registration failed. Please try again.");
         });
     };
 
