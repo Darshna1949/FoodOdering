@@ -1,43 +1,150 @@
-app.controller('AdminController', function($scope) {
+app.controller('AdminController', function($scope, $location, AdminService, FoodService, AuthService, ToastService) {
 
-    // 📊 Dashboard data (can later be replaced with real backend data)
-    $scope.orders = JSON.parse(localStorage.getItem('orders')) || [];
+    if (!AuthService.isAuthenticated()) {
+        $location.path('/login');
+        return;
+    }
 
-    // 🔥 Default page
     $scope.currentPage = 'views/admin/dashboard.html';
+    $scope.activePage = 'dashboard';
 
-    // 🍔 All state for managing food items lives under one object
     $scope.foodAdmin = {
-        foods: JSON.parse(localStorage.getItem('adminFoods')) || [],
+        foods: [],
         searchText: "",
         food: {},
         editIndex: undefined,
         showForm: false
     };
 
-    // ➕ Save food (add or update)
-    $scope.saveFood = function() {
+    $scope.orders = [];
 
+    $scope.users = [];
+
+    function mapOrders(rawOrders) {
+        return (rawOrders || []).map(function(order) {
+            var createdAt = order.createdAt ? new Date(order.createdAt) : null;
+
+            return {
+                id: order._id,
+                backendId: order._id,
+                user: {
+                    name: order.userId && order.userId.name ? order.userId.name : 'Unknown',
+                    email: order.userId && order.userId.email ? order.userId.email : ''
+                },
+                items: (order.items || []).map(function(item) {
+                    var food = item.foodId || {};
+                    return {
+                        name: food.name || 'Item',
+                        category: food.category || 'Other',
+                        price: food.price || 0,
+                        quantity: item.quantity || 0
+                    };
+                }),
+                total: order.totalAmount || 0,
+                status: order.status || 'Pending',
+                createdAt: createdAt,
+                date: createdAt ? createdAt.toLocaleString() : ''
+            };
+        });
+    }
+
+    function loadFoods() {
+        FoodService.getFoods()
+            .then(function(res) {
+                var list = res.data && res.data.foods ? res.data.foods : res.data;
+                $scope.foodAdmin.foods = (list || []).map(function(item) {
+                    return {
+                        _id: item._id,
+                        name: item.name,
+                        category: item.category,
+                        price: item.price,
+                        type: item.type || '',
+                        description: item.description,
+                        image: item.image
+                    };
+                });
+            })
+            .catch(function(err) {
+                console.error('Error loading foods for admin', err);
+                ToastService.error('Failed to load foods');
+            });
+    }
+
+    function loadOrders() {
+        AdminService.getAllOrders()
+            .then(function(res) {
+                var list = res.data && res.data.order ? res.data.order : res.data;
+                $scope.orders = mapOrders(list);
+            })
+            .catch(function(err) {
+                console.error('Error loading orders for admin', err);
+                ToastService.error('Failed to load orders');
+            });
+    }
+
+    function loadUsers() {
+        AdminService.getUsers()
+            .then(function(res) {
+                var list = res.data && res.data.users ? res.data.users : res.data;
+                $scope.users = (list || []).map(function(u) {
+                    return {
+                        id: u._id,
+                        name: u.name,
+                        email: u.email,
+                        role: u.role,
+                        status: u.status || 'Active'
+                    };
+                });
+            })
+            .catch(function(err) {
+                console.warn('Failed to load users for admin (API may not exist yet)', err);
+            });
+    }
+
+    $scope.saveFood = function() {
         var fa = $scope.foodAdmin;
 
-        if (!fa.food || !fa.food.name) return;
-
-        if (fa.editIndex !== undefined && fa.editIndex !== null) {
-            fa.foods[fa.editIndex] = fa.food;
-            fa.editIndex = undefined;
-        } else {
-            fa.foods.push(fa.food);
+        if (!fa.food || !fa.food.name) {
+            return;
         }
 
-        localStorage.setItem('adminFoods', JSON.stringify(fa.foods));
+        var payload = {
+            name: fa.food.name,
+            category: fa.food.category,
+            price: fa.food.price,
+            type: fa.food.type,
+            description: fa.food.description,
+            image: fa.food.image
+        };
 
-        // reset form + search so new item is visible
+        if (fa.editIndex !== undefined && fa.editIndex !== null && fa.food._id) {
+            AdminService.updateFood(fa.food._id, payload)
+                .then(function() {
+                    ToastService.success('Food updated');
+                    loadFoods();
+                })
+                .catch(function(err) {
+                    console.error('Error updating food', err);
+                    ToastService.error('Failed to update food');
+                });
+        } else {
+            AdminService.addFood(payload)
+                .then(function() {
+                    ToastService.success('Food added');
+                    loadFoods();
+                })
+                .catch(function(err) {
+                    console.error('Error adding food', err);
+                    ToastService.error('Failed to add food');
+                });
+        }
+
         fa.food = {};
         fa.searchText = "";
         fa.showForm = false;
+        fa.editIndex = undefined;
     };
 
-    // ✏️ Edit existing food
     $scope.editItem = function(item) {
         var fa = $scope.foodAdmin;
         fa.food = angular.copy(item);
@@ -45,14 +152,25 @@ app.controller('AdminController', function($scope) {
         fa.showForm = true;
     };
 
-    // 🗑 Delete food
     $scope.deleteItem = function(index) {
         var fa = $scope.foodAdmin;
-        fa.foods.splice(index, 1);
-        localStorage.setItem('adminFoods', JSON.stringify(fa.foods));
+        var item = fa.foods[index];
+
+        if (!item || !item._id) {
+            return;
+        }
+
+        AdminService.deleteFood(item._id)
+            .then(function() {
+                ToastService.success('Food deleted');
+                loadFoods();
+            })
+            .catch(function(err) {
+                console.error('Error deleting food', err);
+                ToastService.error('Failed to delete food');
+            });
     };
 
-    // ❌ Cancel and close form
     $scope.cancelEdit = function() {
         var fa = $scope.foodAdmin;
         fa.food = {};
@@ -60,83 +178,199 @@ app.controller('AdminController', function($scope) {
         fa.showForm = false;
     };
 
-    // 🔥 USERS DATA (temporary localStorage)
-     $scope.users = JSON.parse(localStorage.getItem('users')) || [
-     { name: "Darshna", email: "darshna@mail.com", role: "Admin", status: "Active" },
-     { name: "User1", email: "user1@mail.com", role: "User", status: "Active" }
-     ];
-
-    // 🔁 Page switch
     $scope.setPage = function(page) {
-    if (page === 'dashboard') {
-        $scope.currentPage = 'views/admin/dashboard.html';
-    }
-    else if (page === 'food') {
-        $scope.currentPage = 'views/admin/food.html';
-    }
-    else if (page === 'users') {
-        $scope.currentPage = 'views/admin/users.html';
-    }
-    else if (page === 'orders') {
-        $scope.currentPage = 'views/admin/orders.html';
-    }
-    else if (page === 'reports') {
-        $scope.currentPage = 'views/admin/reports.html';
-    }
+        if (page === 'dashboard') {
+            $scope.currentPage = 'views/admin/dashboard.html';
+            $scope.activePage = 'dashboard';
+        } else if (page === 'food') {
+            $scope.currentPage = 'views/admin/food.html';
+            $scope.activePage = 'food';
+            loadFoods();
+        } else if (page === 'users') {
+            $scope.currentPage = 'views/admin/users.html';
+            $scope.activePage = 'users';
+            loadUsers();
+        } else if (page === 'orders') {
+            $scope.currentPage = 'views/admin/orders.html';
+            $scope.activePage = 'orders';
+            loadOrders();
+        } else if (page === 'reports') {
+            $scope.currentPage = 'views/admin/reports.html';
+            $scope.activePage = 'reports';
+        } else if (page === 'user-view') {
+            $location.path('/home');
+        }
     };
 
-     // 🗑 Delete user
-     $scope.deleteUser = function(index) {
-     $scope.users.splice(index, 1);
-     localStorage.setItem('users', JSON.stringify($scope.users));
-     };
+    $scope.deleteUser = function(index) {
+        var user = $scope.users[index];
+        if (!user || !user.id) {
+            return;
+        }
 
-     // 🔄 Toggle status
-     $scope.toggleStatus = function(user) {
-     user.status = user.status === "Active" ? "Inactive" : "Active";
-     localStorage.setItem('users', JSON.stringify($scope.users));
-     };
+        AdminService.updateUserStatus(user.id, 'Inactive')
+            .then(function() {
+                $scope.users.splice(index, 1);
+                ToastService.success('User deactivated');
+            })
+            .catch(function(err) {
+                console.error('Error deactivating user', err);
+                ToastService.error('Failed to update user');
+            });
+    };
 
-     // 📦 Load orders
-$scope.orders = JSON.parse(localStorage.getItem('orders')) || [];
+    $scope.toggleStatus = function(user) {
+        if (!user || !user.id) {
+            return;
+        }
 
-// 🔄 Update order status
-     $scope.updateStatus = function(order) {
+        var nextStatus = user.status === 'Active' ? 'Inactive' : 'Active';
 
-     if (order.status === "Pending") {
-          order.status = "Preparing";
-     } 
-     else if (order.status === "Preparing") {
-          order.status = "Delivered";
-     }
+        AdminService.updateUserStatus(user.id, nextStatus)
+            .then(function() {
+                user.status = nextStatus;
+                ToastService.success('User status updated');
+            })
+            .catch(function(err) {
+                console.error('Error updating user status', err);
+                ToastService.error('Failed to update user status');
+            });
+    };
 
-     localStorage.setItem('orders', JSON.stringify($scope.orders));
-     };
+    $scope.updateStatus = function(order) {
+        if (!order || !order.backendId) {
+            return;
+        }
 
-     // 📦 Total Orders
-     $scope.getTotalOrders = function() {
-     return $scope.orders.length;
-     };
+        var nextStatus;
+        if (order.status === 'Pending') {
+            nextStatus = 'Preparing';
+        } else if (order.status === 'Preparing') {
+            nextStatus = 'Delivered';
+        } else {
+            nextStatus = order.status;
+        }
 
-     // 🍔 Top Selling Items
-     $scope.getTopItems = function() {
+        if (!nextStatus || nextStatus === order.status) {
+            return;
+        }
 
-     let itemMap = {};
+        AdminService.updateOrderStatus(order.backendId, nextStatus)
+            .then(function() {
+                order.status = nextStatus;
+                ToastService.success('Order status updated');
+            })
+            .catch(function(err) {
+                console.error('Error updating order status', err);
+                ToastService.error('Failed to update order status');
+            });
+    };
 
-     $scope.orders.forEach(order => {
-          order.items.forEach(item => {
-               if (!itemMap[item.name]) {
+    $scope.getTotalOrders = function() {
+        return $scope.orders.length;
+    };
+
+    $scope.getTopItems = function() {
+        var itemMap = {};
+
+        $scope.orders.forEach(function(order) {
+            (order.items || []).forEach(function(item) {
+                if (!itemMap[item.name]) {
                     itemMap[item.name] = 0;
-               }
-               itemMap[item.name] += item.quantity;
-          });
-     });
+                }
+                itemMap[item.name] += item.quantity || 0;
+            });
+        });
 
-     let result = Object.keys(itemMap).map(name => ({
-          name,
-          qty: itemMap[name]
-     }));
+        var result = Object.keys(itemMap).map(function(name) {
+            return {
+                name: name,
+                qty: itemMap[name]
+            };
+        });
 
-     return result.sort((a, b) => b.qty - a.qty).slice(0, 5);
-     };
+        return result.sort(function(a, b) { return b.qty - a.qty; }).slice(0, 5);
+    };
+
+    function calculateTotalRevenue() {
+        var total = 0;
+        ($scope.orders || []).forEach(function(order) {
+            total += order.total || 0;
+        });
+        return total;
+    }
+
+    $scope.getRevenue = function() {
+        return calculateTotalRevenue();
+    };
+
+    $scope.getAverageOrderValue = function() {
+        if (!$scope.orders || !$scope.orders.length) {
+            return 0;
+        }
+        return calculateTotalRevenue() / $scope.orders.length;
+    };
+
+    $scope.getGrowthRate = function() {
+        if (!$scope.orders || !$scope.orders.length) {
+            return 0;
+        }
+
+        var now = new Date();
+        var currentStart = new Date(now.getTime());
+        currentStart.setMonth(currentStart.getMonth() - 1);
+        var previousStart = new Date(currentStart.getTime());
+        previousStart.setMonth(previousStart.getMonth() - 1);
+
+        var currentRevenue = 0;
+        var previousRevenue = 0;
+
+        ($scope.orders || []).forEach(function(order) {
+            if (!order.createdAt) {
+                return;
+            }
+
+            if (order.createdAt >= currentStart) {
+                currentRevenue += order.total || 0;
+            } else if (order.createdAt >= previousStart && order.createdAt < currentStart) {
+                previousRevenue += order.total || 0;
+            }
+        });
+
+        if (!previousRevenue) {
+            return 0;
+        }
+
+        var change = ((currentRevenue - previousRevenue) / previousRevenue) * 100;
+        return Math.round(change * 10) / 10; // one decimal place
+    };
+
+    $scope.getStatusPercentage = function(status) {
+        if (!$scope.orders || !$scope.orders.length) {
+            return 0;
+        }
+
+        var counts = {};
+        var totalCount = 0;
+
+        ($scope.orders || []).forEach(function(order) {
+            var s = order.status || 'Pending';
+            counts[s] = (counts[s] || 0) + 1;
+            totalCount += 1;
+        });
+
+        if (!totalCount || !counts[status]) {
+            return 0;
+        }
+
+        return Math.round((counts[status] / totalCount) * 100);
+    };
+
+    $scope.logout = function() {
+        AuthService.logout();
+        $location.path('/login');
+    };
+
+    loadOrders();
+    loadFoods();
 });

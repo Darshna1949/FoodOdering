@@ -6,26 +6,51 @@ exports.placeOrder = async (req, res) => {
   try {
     const userId = req.user.id;
 
-    // get cart
-    const cart = await Cart.findOne({ userId }).populate("items.foodId");
-
-    if (!cart || cart.items.length === 0) {
-      return res.status(400).json({ message: "Cart is empty" });
-    }
-
-    // calculate total
+    let items = [];
     let totalAmount = 0;
 
-    const items = cart.items.map(item => {
-      totalAmount += item.foodId.price * item.quantity;
+    // Prefer items sent from client (mobile/web) payload
+    if (req.body && Array.isArray(req.body.items) && req.body.items.length) {
+      items = req.body.items.map((item) => {
+        const quantity = item.quantity || 1;
+        // totalAmount may be sent from client; if not, we can still accumulate
+        if (typeof item.price === "number") {
+          totalAmount += item.price * quantity;
+        }
+        return {
+          foodId: item.foodId || item._id,
+          quantity
+        };
+      });
 
-      return {
-        foodId: item.foodId._id,
-        quantity: item.quantity
-      };
-    });
+      if (req.body.totalAmount && typeof req.body.totalAmount === "number") {
+        totalAmount = req.body.totalAmount;
+      }
+    } else {
+      // Fallback to server-side cart if no items provided
+      const cart = await Cart.findOne({ userId }).populate("items.foodId");
 
-    // create order
+      if (!cart || cart.items.length === 0) {
+        return res.status(400).json({ message: "Cart is empty" });
+      }
+
+      items = cart.items.map((item) => {
+        totalAmount += item.foodId.price * item.quantity;
+        return {
+          foodId: item.foodId._id,
+          quantity: item.quantity
+        };
+      });
+
+      // clear cart
+      cart.items = [];
+      await cart.save();
+    }
+
+    if (!items.length) {
+      return res.status(400).json({ message: "No items to place order" });
+    }
+
     const order = new Order({
       userId,
       items,
@@ -33,10 +58,6 @@ exports.placeOrder = async (req, res) => {
     });
 
     await order.save();
-
-    // clear cart
-    cart.items = [];
-    await cart.save();
 
     res.json({
       message: "Order placed successfully",

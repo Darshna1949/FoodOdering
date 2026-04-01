@@ -6,27 +6,27 @@ app.config(function($routeProvider) {
         redirectTo: '/home'
     })
     .when('/login', {
-        templateUrl: 'views/login.html',
+        templateUrl: 'views/user/login.html',
         controller: 'AuthController'
     })
     .when('/home', {
-        templateUrl: 'views/home.html',
+        templateUrl: 'views/user/home.html',
         controller: 'FoodController'
     })
     .when('/cart', {
-        templateUrl: 'views/cart.html',
+        templateUrl: 'views/user/cart.html',
         controller: 'CartController'
     })
     .when('/checkout', {
-    templateUrl: 'views/checkout.html',
+    templateUrl: 'views/user/checkout.html',
     controller: 'CheckoutController'
     })
     .when('/profile', {
-        templateUrl: 'views/profile.html',
+        templateUrl: 'views/user/profile.html',
         controller: 'ProfileController'
     })
     .when('/orders', {
-    templateUrl: 'views/orders.html',
+    templateUrl: 'views/user/orders.html',
     controller: 'OrderController'
     })
     .when('/admin', {

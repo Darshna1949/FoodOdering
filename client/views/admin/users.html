@@ -1,0 +1,75 @@
+<div class="rounded-2xl bg-white shadow-sm border border-slate-100 p-6 space-y-5">
+
+  <!-- Header -->
+  <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3">
+    <div>
+      <h1 class="text-2xl font-semibold text-slate-900">Manage Users</h1>
+      <p class="text-sm text-slate-500 mt-1">View roles, statuses and keep your user base clean.</p>
+    </div>
+  </div>
+
+  <!-- 🔍 Search -->
+  <div class="relative">
+    <span class="pointer-events-none absolute inset-y-0 left-3 flex items-center text-slate-400 text-sm">🔍</span>
+    <input
+      type="text"
+      placeholder="Search by name or email..."
+      class="w-full rounded-xl border border-slate-200 bg-white py-2.5 pl-9 pr-3 text-base text-slate-800 placeholder:text-slate-400 shadow-sm focus:border-orange-500 focus:outline-none focus:ring-1 focus:ring-orange-400/70"
+      ng-model="searchUser">
+  </div>
+
+  <!-- 📋 Table -->
+  <div class="overflow-x-auto">
+    <table class="min-w-full text-left text-base">
+      <thead class="bg-slate-50 border border-slate-200 text-sm uppercase tracking-wide text-slate-500">
+        <tr>
+          <th class="px-5 py-2">Name</th>
+          <th class="px-3 py-2">Email</th>
+          <th class="px-3 py-2">Role</th>
+          <th class="px-3 py-2">Status</th>
+          <th class="px-3 py-2 text-right">Actions</th>
+        </tr>
+      </thead>
+      <tbody class="divide-y divide-slate-100">
+        <tr
+          ng-repeat="user in users | filter:searchUser"
+          class="hover:bg-slate-50/80">
+
+          <td class="px-5 py-2 font-medium text-slate-900">{{user.name}}</td>
+          <td class="px-3 py-2 text-slate-600">{{user.email}}</td>
+          <td class="px-3 py-2">
+            <span class="inline-flex items-center rounded-full bg-blue-50 px-2.5 py-0.5 text-sm font-medium text-blue-600">
+              {{user.role}}
+            </span>
+          </td>
+          <td class="px-3 py-2">
+            <span
+              class="inline-flex items-center rounded-full px-2.5 py-0.5 text-sm font-medium"
+              ng-class="user.status === 'Active' ? 'bg-emerald-50 text-emerald-600' : 'bg-red-50 text-red-600'">
+              {{user.status}}
+            </span>
+          </td>
+          <td class="px-3 py-2 text-right space-x-1">
+            <button
+              class="inline-flex items-center justify-center rounded-lg bg-amber-50 px-3 py-1.5 text-sm font-medium text-amber-600 hover:bg-amber-100"
+              ng-click="toggleStatus(user)">
+              🔄 Toggle
+            </button>
+            <button
+              class="inline-flex items-center justify-center rounded-lg bg-red-50 px-3 py-1.5 text-sm font-medium text-red-600 hover:bg-red-100"
+              ng-click="deleteUser($index)">
+              🗑 Disable
+            </button>
+          </td>
+
+        </tr>
+        <tr ng-if="!users.length">
+          <td colspan="5" class="px-5 py-6 text-center text-slate-500 text-base">
+            No users loaded yet.
+          </td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+
+</div>

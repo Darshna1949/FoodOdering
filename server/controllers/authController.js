@@ -59,9 +59,78 @@ exports.login = async (req, res) => {
       { expiresIn: "1d" }
     );
 
+    // send back basic user info as well so the UI
+    // can immediately know who is logged in
+    const safeUser = {
+      _id: user._id,
+      name: user.name,
+      email: user.email,
+      role: user.role
+    };
+
     res.json({
       message: "Login successful",
-      token
+      token,
+      user: safeUser
+    });
+
+  } catch (error) {
+    res.status(500).json({ error: error.message });
+  }
+};
+
+// GET CURRENT USER PROFILE
+exports.getProfile = async (req, res) => {
+  try {
+    const userId = req.user && req.user.id;
+
+    if (!userId) {
+      return res.status(400).json({ message: "User id missing in token" });
+    }
+
+    const user = await User.findById(userId).select("-password");
+
+    if (!user) {
+      return res.status(404).json({ message: "User not found" });
+    }
+
+    res.json({ user });
+
+  } catch (error) {
+    res.status(500).json({ error: error.message });
+  }
+};
+
+// UPDATE CURRENT USER PROFILE
+exports.updateProfile = async (req, res) => {
+  try {
+    const userId = req.user && req.user.id;
+
+    if (!userId) {
+      return res.status(400).json({ message: "User id missing in token" });
+    }
+
+    const { name, phone, address, profilePhoto } = req.body;
+
+    const update = {};
+    if (typeof name === "string" && name.trim() !== "") update.name = name.trim();
+    if (typeof phone === "string") update.phone = phone.trim();
+    if (typeof address === "string") update.address = address.trim();
+    if (typeof profilePhoto === "string") update.profilePhoto = profilePhoto.trim();
+
+    const updatedUser = await User.findByIdAndUpdate(
+      userId,
+      { $set: update },
+      { new: true }
+    ).select("-password");
+
+    if (!updatedUser) {
+      return res.status(404).json({ message: "User not found" });
+    }
+
+    res.json({
+      message: "Profile updated successfully",
+      user: updatedUser
     });
 
   } catch (error) {

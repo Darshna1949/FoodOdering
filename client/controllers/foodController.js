@@ -23,10 +23,12 @@ app.controller('FoodController', function($scope, $location, FoodService, CartSe
 
             $scope.allFoods = (list || []).map(function(item) {
                 return {
+                    _id: item._id,
                     name: item.name,
                     price: item.price,
                     description: item.description,
                     category: item.category,
+                    type: item.type || '',
                     image: getImage(item.name, item.image)
                 };
             });

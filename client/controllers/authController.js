@@ -10,8 +10,22 @@ app.controller('AuthController', function($scope, $location, AuthService, ToastS
             if (res.data && res.data.token) {
                 AuthService.setToken(res.data.token);
             }
+
+            // Cache user info returned from backend (includes role)
+            var loggedInUser = res.data && res.data.user ? res.data.user : null;
+            if (loggedInUser) {
+                AuthService.setCurrentUser(loggedInUser);
+            }
+
             ToastService.success("Login successful");
-            $location.path('/home');
+
+            // If the logged in user is an admin, send them to the admin panel
+            if (loggedInUser && loggedInUser.role === 'admin') {
+                $location.path('/admin');
+            } else {
+                // Normal users go to home page
+                $location.path('/home');
+            }
         })
         .catch(function(err) {
             ToastService.error("Login failed. Please check your credentials.");

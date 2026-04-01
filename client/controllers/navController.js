@@ -12,10 +12,10 @@ app.controller('NavController', function($scope, $location, CartService, AuthSer
 
     refreshState();
 
-    // Show navbar on all pages except login/register
+    // Show navbar on all pages except login and admin
     $scope.shouldShowNavbar = function() {
         var path = $location.path();
-        return path !== '/login';
+        return path !== '/login' && path !== '/admin';
     };
 
     $scope.goHome = function() {
@@ -53,6 +53,11 @@ app.controller('NavController', function($scope, $location, CartService, AuthSer
 
     // Update navbar state when route changes (e.g., cart updated elsewhere)
     $scope.$on('$routeChangeSuccess', function() {
+        refreshState();
+    });
+
+    // Update when cart changes anywhere in the app
+    $scope.$on('cartUpdated', function() {
         refreshState();
     });
 

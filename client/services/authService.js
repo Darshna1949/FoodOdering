@@ -25,5 +25,35 @@ app.service('AuthService', function($http) {
 
     this.logout = function() {
         localStorage.removeItem('token');
+        localStorage.removeItem('user');
+    };
+
+    // Fetch currently logged in user's profile from backend
+    this.getProfile = function() {
+        var token = localStorage.getItem('token');
+        return $http.get(baseUrl + "/me", {
+            headers: {
+                authorization: token || ''
+            }
+        });
+    };
+
+    // Update currently logged in user's profile on backend
+    this.updateProfile = function(profileData) {
+        var token = localStorage.getItem('token');
+        return $http.put(baseUrl + "/me", profileData, {
+            headers: {
+                authorization: token || ''
+            }
+        });
+    };
+
+    this.setCurrentUser = function(user) {
+        localStorage.setItem('user', JSON.stringify(user));
+    };
+
+    this.getCurrentUser = function() {
+        var raw = localStorage.getItem('user');
+        return raw ? JSON.parse(raw) : null;
     };
 });

@@ -1,53 +1,111 @@
-<div class="flex h-screen bg-gray-100">
+<div class="flex h-screen bg-slate-100 text-slate-900 text-lg sm:text-xl">
 
   <!-- 🔶 Sidebar -->
-  <div class="w-64 bg-gray-900 text-white flex flex-col">
+  <aside class="w-72 bg-white border-r border-slate-200 flex flex-col">
 
-    <div class="p-4 text-xl font-bold border-b border-gray-700">
-      🅰 Admin Panel
+    <!-- Brand -->
+    <div class="flex items-center gap-3 px-6 py-5 border-b border-slate-200">
+      <div class="w-9 h-9 rounded-xl bg-orange-500 flex items-center justify-center text-xl font-black text-white">
+        A
+      </div>
+      <div>
+        <p class="text-sm font-medium text-slate-500">FoodieHub</p>
+        <p class="text-base font-semibold text-slate-900">Admin Panel</p>
+      </div>
     </div>
 
-    <div class="flex-1 p-4 space-y-2">
+    <!-- Navigation -->
+    <nav class="flex-1 px-3 py-4 space-y-1 text-base">
 
-      <button  ng-click="setPage('dashboard')" class="block w-full text-left px-3 py-2 rounded bg-orange-500">
-        Dashboard
+      <button
+        ng-click="setPage('dashboard')"
+        class="flex w-full items-center gap-3 rounded-lg px-3 py-2 transition"
+        ng-class="{
+          'bg-orange-500 text-white shadow-lg shadow-orange-500/30': activePage === 'dashboard',
+          'text-slate-700 hover:bg-slate-100': activePage !== 'dashboard'
+        }">
+        <span class="text-lg">📊</span>
+        <span>Dashboard</span>
       </button>
 
-      <button ng-click="setPage('food')" class="block w-full text-left px-3 py-2 hover:bg-gray-700 rounded">
-        Food Items
+      <button
+        ng-click="setPage('food')"
+        class="flex w-full items-center gap-3 rounded-lg px-3 py-2 transition"
+        ng-class="{
+          'bg-orange-500 text-white shadow-lg shadow-orange-500/30': activePage === 'food',
+          'text-slate-700 hover:bg-slate-100': activePage !== 'food'
+        }">
+        <span class="text-lg">🍽️</span>
+        <span>Food Items</span>
       </button>
 
-      <button ng-click="setPage('users')" class="block w-full text-left px-3 py-2 hover:bg-gray-700 rounded">
-        Users
+      <button
+        ng-click="setPage('users')"
+        class="flex w-full items-center gap-3 rounded-lg px-3 py-2 transition"
+        ng-class="{
+          'bg-orange-500 text-white shadow-lg shadow-orange-500/30': activePage === 'users',
+          'text-slate-700 hover:bg-slate-100': activePage !== 'users'
+        }">
+        <span class="text-lg">👥</span>
+        <span>Users</span>
       </button>
 
-      <button ng-click="setPage('orders')" class="block w-full text-left px-3 py-2 hover:bg-gray-700 rounded">
-        Orders
+      <button
+        ng-click="setPage('orders')"
+        class="flex w-full items-center gap-3 rounded-lg px-3 py-2 transition"
+        ng-class="{
+          'bg-orange-500 text-white shadow-lg shadow-orange-500/30': activePage === 'orders',
+          'text-slate-700 hover:bg-slate-100': activePage !== 'orders'
+        }">
+        <span class="text-lg">🧾</span>
+        <span>Orders</span>
       </button>
 
-      <button ng-click="setPage('reports')" class="block w-full text-left px-3 py-2 hover:bg-gray-700 rounded">
-        Reports
+      <button
+        ng-click="setPage('reports')"
+        class="flex w-full items-center gap-3 rounded-lg px-3 py-2 transition"
+        ng-class="{
+          'bg-orange-500 text-white shadow-lg shadow-orange-500/30': activePage === 'reports',
+          'text-slate-700 hover:bg-slate-100': activePage !== 'reports'
+        }">
+        <span class="text-lg">📈</span>
+        <span>Reports</span>
       </button>
 
+    </nav>
+
+    <!-- Footer actions -->
+    <div class="px-4 py-4 border-t border-slate-200 space-y-2 text-base">
+      <button
+        ng-click="setPage('user-view')"
+        class="flex w-full items-center justify-between rounded-lg px-3 py-2 bg-slate-100 hover:bg-slate-200 text-slate-800 transition">
+        <span class="flex items-center gap-2">
+          <span class="text-lg">🏠</span>
+          <span>User View</span>
+        </span>
+        <span class="text-xs text-slate-300">Open site</span>
+      </button>
+
+      <button
+        ng-click="logout()"
+        class="flex w-full items-center gap-3 rounded-lg px-3 py-2 bg-red-500 hover:bg-red-600 text-white transition">
+        <span class="text-lg">🚪</span>
+        <span>Logout</span>
+      </button>
     </div>
 
-    <div class="p-4 border-t border-gray-700">
-      <button ng-click="setPage('user-view')" class="block w-full text-left">User View</button>
-      <button ng-click="logout()" class="block w-full text-left mt-2">Logout</button>
-    </div>
-
-  </div>
+  </aside>
 
   <!-- 🔶 Main Content -->
-  <div class="flex-1 p-6">
-
-    <h2 class="text-2xl font-bold mb-4">
-      Welcome, Admin User
-    </h2>
+  <main class="flex-1 flex flex-col bg-slate-50">
 
     <!-- Dynamic content -->
-    <div ng-include="currentPage"></div>
+    <section class="flex-1 overflow-y-auto px-4 sm:px-10 lg:px-16 py-10">
+      <div class="max-w-7xl mx-auto w-full">
+        <div ng-include="currentPage"></div>
+      </div>
+    </section>
 
-  </div>
+  </main>
 
 </div>

@@ -3,7 +3,7 @@ const Food = require("../models/Food");
 // ADD FOOD
 exports.addFood = async (req, res) => {
   try {
-    const { name, description, price, category, image } = req.body;
+    const { name, description, price, category, type, image } = req.body;
 
     // Default food image from Unsplash when none is provided
     const defaultImage =
@@ -14,6 +14,7 @@ exports.addFood = async (req, res) => {
       description,
       price,
       category,
+      type,
       image: image || defaultImage
     });
 

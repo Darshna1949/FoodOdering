@@ -1,9 +1,11 @@
-app.service('CartService', function() {
+app.service('CartService', function($rootScope) {
 
     var cart = JSON.parse(localStorage.getItem('cart')) || [];
 
     function saveCart() {
         localStorage.setItem('cart', JSON.stringify(cart));
+        // Notify listeners (e.g., navbar) that the cart has changed
+        $rootScope.$broadcast('cartUpdated');
     }
 
     this.getCart = function() {
@@ -17,7 +19,12 @@ app.service('CartService', function() {
     };
 
     this.addToCart = function(item) {
-        var existing = cart.find(c => c.name === item.name);
+        var existing = cart.find(function(c) {
+            if (item._id && c._id) {
+                return c._id === item._id;
+            }
+            return c.name === item.name;
+        });
 
         if (existing) {
             existing.quantity++;
