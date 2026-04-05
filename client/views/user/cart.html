@@ -11,7 +11,10 @@
         class="flex items-center bg-white p-4 rounded shadow"
         ng-repeat="item in cart track by $index">
 
-        <img ng-src="{{item.image}}" class="w-20 h-20 rounded">
+        <!-- Product image with fixed size so it displays clearly -->
+        <div class="w-24 h-24 overflow-hidden rounded-xl flex-shrink-0">
+          <img ng-src="{{item.image}}" class="w-full h-full object-cover">
+        </div>
 
         <div class="ml-4 flex-1">
           <h3 class="font-semibold">{{item.name}}</h3>
@@ -41,10 +44,10 @@
 
       <h3 class="font-bold mb-3">Order Summary</h3>
 
-      <p>Subtotal: ₹ {{getTotal()}}</p>
-      <p>Tax (10%): ₹ {{getTotal() * 0.1}}</p>
+      <p>Subtotal: ₹ {{getTotal() | number:2}}</p>
+      <p>Tax (10%): ₹ {{(getTotal() * 0.1) | number:2}}</p>
       <p class="font-bold text-lg mt-2">
-        Total: ₹ {{getTotal() * 1.1}}
+        Total: ₹ {{(getTotal() * 1.1) | number:2}}
       </p>
 
       <button 

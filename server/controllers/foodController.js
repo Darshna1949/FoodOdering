@@ -33,24 +33,15 @@ exports.addFood = async (req, res) => {
 // GET ALL FOOD
 exports.getFoods = async (req, res) => {
   try {
-    const defaultImage =
-      "https://images.unsplash.com/photo-1546069901-ba9599a7e63c?auto=format&fit=crop&w=800&q=80";
-
     const foods = await Food.find();
 
-    const foodsWithImages = foods.map(food => {
-      // If image missing OR looks like a local file (e.g. "pizza.jpg"),
-      // replace it with the default Unsplash image URL so the browser
-      // doesn't try to load it from http://127.0.0.1:8080/pizza.jpg.
-      if (!food.image || !food.image.startsWith("http")) {
-        food.image = defaultImage;
-      }
-      return food;
-    });
-
+    // Return foods as stored. The frontend is already responsible for
+    // providing a sensible fallback image per item (based on the name)
+    // when image is missing or not a full URL, so we don't force a
+    // single default image here.
     res.json({
       message: "Food list fetched successfully",
-      foods: foodsWithImages
+      foods
     });
 
   } catch (error) {

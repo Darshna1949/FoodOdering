@@ -1,4 +1,4 @@
-<div class="space-y-8">
+<div class="space-y-8" ng-init="initReportsCharts()">
 
   <!-- Page header -->
   <header class="space-y-1">
@@ -43,23 +43,19 @@
 
   </div>
 
-  <!-- Charts row: Revenue trend & Status distribution -->
+  <!-- Charts row: Monthly revenue & Status distribution -->
   <div class="grid gap-6 md:grid-cols-2">
 
-    <!-- Revenue & Orders Trend (static visual) -->
+    <!-- Monthly Revenue chart -->
     <div class="rounded-2xl bg-white p-5 shadow-sm border border-slate-200">
       <div class="flex items-center justify-between mb-4">
         <div>
-          <h2 class="text-lg md:text-xl font-semibold text-slate-900">Revenue &amp; Orders Trend</h2>
-          <p class="text-xs md:text-sm text-slate-500 mt-1">Last 6 months</p>
+          <h2 class="text-lg md:text-xl font-semibold text-slate-900">Monthly Revenue</h2>
+          <p class="text-xs md:text-sm text-slate-500 mt-1">Total revenue for the last 6 months.</p>
         </div>
       </div>
-
-      <div class="flex items-end justify-between gap-2 h-40">
-        <div class="flex-1 flex flex-col items-center gap-2" ng-repeat="month in ['Jan','Feb','Mar','Apr','May','Jun'] track by $index">
-          <div class="w-7 bg-orange-500 rounded-t-lg" ng-style="{'height': (40 + ($index * 8)) + '%'}"></div>
-          <span class="text-xs text-slate-500">{{month}}</span>
-        </div>
+      <div class="h-56">
+        <canvas id="monthlyRevenueChart"></canvas>
       </div>
     </div>
 
@@ -67,31 +63,11 @@
     <div class="rounded-2xl bg-white p-5 shadow-sm border border-slate-200 flex flex-col justify-between">
       <div>
         <h2 class="text-lg md:text-xl font-semibold text-slate-900 mb-2">Order Status Distribution</h2>
-        <p class="text-xs md:text-sm text-slate-500">How orders are distributed across statuses.</p>
+        <p class="text-xs md:text-sm text-slate-500">Visual breakdown of orders by status.</p>
       </div>
 
-      <div class="mt-5 space-y-3">
-        <div class="flex items-center justify-between">
-          <div class="flex items-center gap-2">
-            <span class="w-3 h-3 rounded-full bg-emerald-500"></span>
-            <span class="text-sm text-slate-700">Delivered</span>
-          </div>
-          <span class="text-sm font-semibold text-slate-900">{{getStatusPercentage('Delivered')}}%</span>
-        </div>
-        <div class="flex items-center justify-between">
-          <div class="flex items-center gap-2">
-            <span class="w-3 h-3 rounded-full bg-amber-400"></span>
-            <span class="text-sm text-slate-700">Pending</span>
-          </div>
-          <span class="text-sm font-semibold text-slate-900">{{getStatusPercentage('Pending')}}%</span>
-        </div>
-        <div class="flex items-center justify-between">
-          <div class="flex items-center gap-2">
-            <span class="w-3 h-3 rounded-full bg-sky-500"></span>
-            <span class="text-sm text-slate-700">Out for Delivery</span>
-          </div>
-          <span class="text-sm font-semibold text-slate-900">{{getStatusPercentage('Out for Delivery')}}%</span>
-        </div>
+      <div class="mt-3 h-56">
+        <canvas id="statusChart"></canvas>
       </div>
     </div>
 

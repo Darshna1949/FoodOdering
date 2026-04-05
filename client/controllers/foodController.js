@@ -44,12 +44,8 @@ app.controller('FoodController', function($scope, $location, FoodService, CartSe
         });
 
     $scope.addToCart = function(item) {
-        if (!AuthService.isAuthenticated()) {
-            ToastService.error("Please login to add items to cart");
-            $location.path('/login');
-            return;
-        }
-
+        // Allow both logged-in and guest users to add items to cart.
+        // Checkout and order placement are still protected elsewhere.
         CartService.addToCart(item);
         $scope.cartCount = CartService.getCartCount();
         ToastService.success(item.name + " added to cart");
@@ -72,7 +68,16 @@ app.controller('FoodController', function($scope, $location, FoodService, CartSe
 
         if ($scope.activeCategory && $scope.activeCategory !== 'All') {
             filtered = filtered.filter(function(item) {
-                return item.category && item.category.toLowerCase() === $scope.activeCategory.toLowerCase();
+                if (!item.category) {
+                    return false;
+                }
+
+                var cat = (item.category || '').toLowerCase().trim();
+                var active = ($scope.activeCategory || '').toLowerCase().trim();
+
+                // Match if the stored category contains the active label,
+                // so values like "Veg Pizza" or "pizza " still match "Pizza".
+                return cat.indexOf(active) !== -1;
             });
         }
 

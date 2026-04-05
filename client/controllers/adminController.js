@@ -1,4 +1,4 @@
-app.controller('AdminController', function($scope, $location, AdminService, FoodService, AuthService, ToastService) {
+app.controller('AdminController', function($scope, $location, $timeout, AdminService, FoodService, AuthService, ToastService) {
 
     if (!AuthService.isAuthenticated()) {
         $location.path('/login');
@@ -75,6 +75,19 @@ app.controller('AdminController', function($scope, $location, AdminService, Food
             .then(function(res) {
                 var list = res.data && res.data.order ? res.data.order : res.data;
                 $scope.orders = mapOrders(list);
+
+                // After orders load, (re)build charts for the
+                // currently active admin page so they don't rely
+                // on a manual tab switch to appear.
+                $timeout(function() {
+                    if ($scope.activePage === 'dashboard') {
+                        buildDailyRevenueChart('dailyRevenueChartDashboard');
+                        buildDailyStatusChart('dailyStatusChartDashboard');
+                    } else if ($scope.activePage === 'reports') {
+                        buildMonthlyRevenueChart();
+                        buildStatusChart();
+                    }
+                }, 0);
             })
             .catch(function(err) {
                 console.error('Error loading orders for admin', err);
@@ -197,6 +210,7 @@ app.controller('AdminController', function($scope, $location, AdminService, Food
         } else if (page === 'reports') {
             $scope.currentPage = 'views/admin/reports.html';
             $scope.activePage = 'reports';
+            loadOrders();
         } else if (page === 'user-view') {
             $location.path('/home');
         }
@@ -369,6 +383,297 @@ app.controller('AdminController', function($scope, $location, AdminService, Food
     $scope.logout = function() {
         AuthService.logout();
         $location.path('/login');
+    };
+
+    function buildDailyRevenueChart(canvasId) {
+        if (typeof Chart === 'undefined') {
+            return;
+        }
+
+        var ctx = document.getElementById(canvasId);
+        if (!ctx) {
+            return;
+        }
+
+        var existing = Chart.getChart ? Chart.getChart(ctx) : null;
+        if (existing) {
+            existing.destroy();
+        }
+
+        var now = new Date();
+        var labels = [];
+        var data = [];
+
+        // Last 7 days, oldest to newest
+        for (var i = 6; i >= 0; i--) {
+            var d = new Date(now.getFullYear(), now.getMonth(), now.getDate() - i);
+            var label = (d.getMonth() + 1) + '/' + d.getDate();
+
+            var dayRevenue = 0;
+            ($scope.orders || []).forEach(function(order) {
+                if (!order.createdAt) {
+                    return;
+                }
+                var od = order.createdAt;
+                if (od.getFullYear() === d.getFullYear() && od.getMonth() === d.getMonth() && od.getDate() === d.getDate()) {
+                    dayRevenue += order.total || 0;
+                }
+            });
+
+            labels.push(label);
+            data.push(dayRevenue);
+        }
+
+        new Chart(ctx, {
+            type: 'bar',
+            data: {
+                labels: labels,
+                datasets: [{
+                    label: 'Revenue (₹)',
+                    data: data,
+                    backgroundColor: '#f97316'
+                }]
+            },
+            options: {
+                responsive: true,
+                maintainAspectRatio: false,
+                scales: {
+                    y: {
+                        beginAtZero: true,
+                        ticks: {
+                            precision: 0
+                        }
+                    }
+                }
+            }
+        });
+    }
+
+    function buildDailyStatusChart(canvasId) {
+        if (typeof Chart === 'undefined') {
+            return;
+        }
+
+        var ctx = document.getElementById(canvasId);
+        if (!ctx) {
+            return;
+        }
+
+        var existing = Chart.getChart ? Chart.getChart(ctx) : null;
+        if (existing) {
+            existing.destroy();
+        }
+
+        var now = new Date();
+        var labels = [];
+        var statuses = ['Pending', 'Preparing', 'Delivered'];
+        var dataMap = {
+            Pending: [],
+            Preparing: [],
+            Delivered: []
+        };
+
+        // Last 7 days, oldest to newest
+        for (var i = 6; i >= 0; i--) {
+            var d = new Date(now.getFullYear(), now.getMonth(), now.getDate() - i);
+            var label = (d.getMonth() + 1) + '/' + d.getDate();
+            labels.push(label);
+
+            var counts = {
+                Pending: 0,
+                Preparing: 0,
+                Delivered: 0
+            };
+
+            ($scope.orders || []).forEach(function(order) {
+                if (!order.createdAt) {
+                    return;
+                }
+                var od = order.createdAt;
+                if (od.getFullYear() === d.getFullYear() && od.getMonth() === d.getMonth() && od.getDate() === d.getDate()) {
+                    var s = order.status || 'Pending';
+                    if (!counts[s]) {
+                        counts[s] = 0;
+                    }
+                    counts[s] += 1;
+                }
+            });
+
+            statuses.forEach(function(s) {
+                dataMap[s].push(counts[s] || 0);
+            });
+        }
+
+        new Chart(ctx, {
+            type: 'bar',
+            data: {
+                labels: labels,
+                datasets: [
+                    {
+                        label: 'Pending',
+                        data: dataMap.Pending,
+                        backgroundColor: '#fbbf24',
+                        stack: 'status'
+                    },
+                    {
+                        label: 'Preparing',
+                        data: dataMap.Preparing,
+                        backgroundColor: '#38bdf8',
+                        stack: 'status'
+                    },
+                    {
+                        label: 'Delivered',
+                        data: dataMap.Delivered,
+                        backgroundColor: '#22c55e',
+                        stack: 'status'
+                    }
+                ]
+            },
+            options: {
+                responsive: true,
+                maintainAspectRatio: false,
+                scales: {
+                    x: {
+                        stacked: true
+                    },
+                    y: {
+                        stacked: true,
+                        beginAtZero: true,
+                        ticks: {
+                            precision: 0
+                        }
+                    }
+                }
+            }
+        });
+    }
+
+    function buildStatusChart() {
+        if (typeof Chart === 'undefined') {
+            return;
+        }
+
+        var ctx = document.getElementById('statusChart');
+        if (!ctx) {
+            return;
+        }
+
+        var existing = Chart.getChart ? Chart.getChart(ctx) : null;
+        if (existing) {
+            existing.destroy();
+        }
+
+        var counts = {};
+        var labels = ['Pending', 'Preparing', 'Delivered'];
+
+        ($scope.orders || []).forEach(function(order) {
+            var s = order.status || 'Pending';
+            counts[s] = (counts[s] || 0) + 1;
+        });
+
+        var data = labels.map(function(label) {
+            return counts[label] || 0;
+        });
+
+        new Chart(ctx, {
+            type: 'doughnut',
+            data: {
+                labels: labels,
+                datasets: [{
+                    data: data,
+                    backgroundColor: ['#f97316', '#38bdf8', '#22c55e']
+                }]
+            },
+            options: {
+                responsive: true,
+                maintainAspectRatio: false,
+                plugins: {
+                    legend: {
+                        position: 'bottom'
+                    }
+                }
+            }
+        });
+    }
+
+    function buildMonthlyRevenueChart() {
+        if (typeof Chart === 'undefined') {
+            return;
+        }
+
+        var ctx = document.getElementById('monthlyRevenueChart');
+        if (!ctx) {
+            return;
+        }
+
+        var existing = Chart.getChart ? Chart.getChart(ctx) : null;
+        if (existing) {
+            existing.destroy();
+        }
+
+        var monthNames = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
+        var now = new Date();
+        var labels = [];
+        var data = [];
+
+        // Last 6 months, oldest to newest
+        for (var i = 5; i >= 0; i--) {
+            var d = new Date(now.getFullYear(), now.getMonth() - i, 1);
+            var label = monthNames[d.getMonth()];
+
+            var monthRevenue = 0;
+            ($scope.orders || []).forEach(function(order) {
+                if (!order.createdAt) {
+                    return;
+                }
+                var od = order.createdAt;
+                if (od.getFullYear() === d.getFullYear() && od.getMonth() === d.getMonth()) {
+                    monthRevenue += order.total || 0;
+                }
+            });
+
+            labels.push(label);
+            data.push(monthRevenue);
+        }
+
+        new Chart(ctx, {
+            type: 'bar',
+            data: {
+                labels: labels,
+                datasets: [{
+                    label: 'Revenue (₹)',
+                    data: data,
+                    backgroundColor: '#f97316'
+                }]
+            },
+            options: {
+                responsive: true,
+                maintainAspectRatio: false,
+                scales: {
+                    y: {
+                        beginAtZero: true,
+                        ticks: {
+                            precision: 0
+                        }
+                    }
+                }
+            }
+        });
+    }
+
+    $scope.initReportsCharts = function() {
+        // Delay chart creation until the template is rendered
+        $timeout(function() {
+            buildMonthlyRevenueChart();
+            buildStatusChart();
+        }, 0);
+    };
+
+    $scope.initDashboardCharts = function() {
+        $timeout(function() {
+            buildDailyRevenueChart('dailyRevenueChartDashboard');
+            buildDailyStatusChart('dailyStatusChartDashboard');
+        }, 0);
     };
 
     loadOrders();
