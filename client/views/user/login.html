@@ -91,9 +91,21 @@
               class="surface-input"
               ng-model="user.email" required>
 
-            <input type="password" placeholder="Password"
-              class="surface-input"
-              ng-model="user.password" required>
+            <div class="relative">
+              <input
+                ng-attr-type="{{showPassword ? 'text' : 'password'}}"
+                placeholder="Password"
+                class="surface-input pr-12"
+                ng-model="user.password" required>
+              <button
+                type="button"
+                class="absolute right-3 top-1/2 -translate-y-1/2 flex h-8 w-8 items-center justify-center rounded-full text-slate-500 transition hover:bg-slate-100 hover:text-slate-900"
+                ng-click="togglePasswordVisibility()"
+                aria-label="{{showPassword ? 'Hide password' : 'Show password'}}">
+                <span ng-if="!showPassword">👁</span>
+                <span ng-if="showPassword">🙈</span>
+              </button>
+            </div>
 
             <button 
               class="primary-button w-full py-3">
@@ -112,9 +124,21 @@
               class="surface-input"
               ng-model="user.email" required>
 
-            <input type="password" placeholder="Password"
-              class="surface-input"
-              ng-model="user.password" required>
+            <div class="relative">
+              <input
+                ng-attr-type="{{showPassword ? 'text' : 'password'}}"
+                placeholder="Password"
+                class="surface-input pr-12"
+                ng-model="user.password" required>
+              <button
+                type="button"
+                class="absolute right-3 top-1/2 -translate-y-1/2 flex h-8 w-8 items-center justify-center rounded-full text-slate-500 transition hover:bg-slate-100 hover:text-slate-900"
+                ng-click="togglePasswordVisibility()"
+                aria-label="{{showPassword ? 'Hide password' : 'Show password'}}">
+                <span ng-if="!showPassword">👁</span>
+                <span ng-if="showPassword">🙈</span>
+              </button>
+            </div>
 
             <button 
               class="primary-button w-full py-3">

@@ -2,6 +2,7 @@ app.controller('AuthController', function($scope, $location, AuthService, ToastS
 
     $scope.user = {};
     $scope.isLogin = true; // default tab
+    $scope.showPassword = false;
 
     $scope.login = function() {
         AuthService.login($scope.user)
@@ -37,10 +38,15 @@ app.controller('AuthController', function($scope, $location, AuthService, ToastS
         .then(function(res) {
             ToastService.success("Registration successful. You can now log in.");
             $scope.isLogin = true; // switch to login
+            $scope.showPassword = false;
         })
         .catch(function(err) {
             ToastService.error("Registration failed. Please try again.");
         });
+    };
+
+    $scope.togglePasswordVisibility = function() {
+        $scope.showPassword = !$scope.showPassword;
     };
 
 });
