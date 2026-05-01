@@ -1,78 +1,130 @@
-<div class="flex items-center justify-center h-screen bg-gray-100">
+<div class="page-reveal min-h-[calc(100vh-2rem)] px-4 py-6 sm:px-6 lg:px-8">
 
-  <div class="bg-white p-6 rounded-xl shadow w-96">
+  <div class="mx-auto grid min-h-[calc(100vh-4rem)] max-w-6xl overflow-hidden rounded-[2rem] glass-card lg:grid-cols-[1.05fr_0.95fr]">
 
-    <!-- Logo -->
-    <div class="flex justify-center mb-3">
-      <div class="bg-orange-500 text-white w-10 h-10 flex items-center justify-center rounded-full">
-        F
+    <aside class="relative hidden overflow-hidden bg-slate-950 px-8 py-10 text-white lg:flex lg:flex-col lg:justify-between">
+      <div class="absolute inset-0 bg-[radial-gradient(circle_at_top_right,rgba(255,122,24,0.28),transparent_32%),radial-gradient(circle_at_bottom_left,rgba(56,189,248,0.22),transparent_28%)]"></div>
+      <div class="relative z-10 space-y-6">
+        <div class="flex items-center gap-3">
+          <div class="flex h-12 w-12 items-center justify-center rounded-2xl bg-gradient-to-br from-orange-500 to-rose-500 text-2xl shadow-lg shadow-orange-500/30">🍔</div>
+          <div>
+            <p class="text-xs uppercase tracking-[0.24em] text-white/55">FoodieHub</p>
+            <p class="text-lg font-bold">Dynamic ordering made visual</p>
+          </div>
+        </div>
+
+        <div class="max-w-xl space-y-5 pt-8">
+          <span class="inline-flex rounded-full border border-white/15 bg-white/10 px-4 py-2 text-xs font-bold uppercase tracking-[0.18em] text-white/85">Animated checkout flow</span>
+          <h1 class="display-font text-5xl font-bold leading-[0.92]">A warmer, faster, more alive food experience.</h1>
+          <p class="max-w-lg text-base leading-7 text-white/72">
+            Sign in, browse the menu, and manage your cart inside a vibrant interface with glass surfaces, motion, and stronger visual hierarchy.
+          </p>
+        </div>
+
+        <div class="grid gap-4 sm:grid-cols-3">
+          <div class="rounded-2xl border border-white/10 bg-white/[0.08] p-4 backdrop-blur-xl">
+            <p class="text-xs uppercase tracking-[0.18em] text-white/55">Speed</p>
+            <p class="mt-2 text-2xl font-bold">Quick</p>
+          </div>
+          <div class="rounded-2xl border border-white/10 bg-white/[0.08] p-4 backdrop-blur-xl">
+            <p class="text-xs uppercase tracking-[0.18em] text-white/55">Mood</p>
+            <p class="mt-2 text-2xl font-bold">Bold</p>
+          </div>
+          <div class="rounded-2xl border border-white/10 bg-white/[0.08] p-4 backdrop-blur-xl">
+            <p class="text-xs uppercase tracking-[0.18em] text-white/55">Look</p>
+            <p class="mt-2 text-2xl font-bold">Glass</p>
+          </div>
+        </div>
       </div>
-    </div>
 
-    <!-- Title -->
-    <h2 class="text-center text-xl font-bold mb-1">
-      Welcome to FoodieHub
-    </h2>
-    <p class="text-center text-gray-500 text-sm mb-4">
-      Login or create an account to continue
-    </p>
+      <div class="relative z-10 flex items-center gap-3 text-sm text-white/65">
+        <span class="h-2.5 w-2.5 rounded-full bg-emerald-400 shadow-[0_0_18px_rgba(74,222,128,0.9)]"></span>
+        Secure login and register flow connected to your existing backend.
+      </div>
+    </aside>
 
-    <!-- Tabs -->
-    <div class="flex bg-gray-200 rounded mb-4">
-      <button 
-        class="w-1/2 py-2 rounded"
-        ng-class="{'bg-white shadow': isLogin}"
-        ng-click="isLogin = true">
-        Login
-      </button>
+    <section class="flex items-center justify-center px-5 py-8 sm:px-10 sm:py-12">
+      <div class="w-full max-w-md">
+        <div class="mb-6 lg:hidden">
+          <div class="flex items-center gap-3">
+            <div class="flex h-11 w-11 items-center justify-center rounded-2xl bg-gradient-to-br from-orange-500 to-rose-500 text-xl text-white shadow-lg shadow-orange-500/30">🍔</div>
+            <div>
+              <p class="text-xs uppercase tracking-[0.22em] text-slate-500">FoodieHub</p>
+              <h2 class="text-2xl font-bold text-slate-950">Welcome back</h2>
+            </div>
+          </div>
+        </div>
 
-      <button 
-        class="w-1/2 py-2 rounded"
-        ng-class="{'bg-white shadow': !isLogin}"
-        ng-click="isLogin = false">
-        Register
-      </button>
-    </div>
+        <div class="rounded-[1.75rem] bg-white/[0.82] p-6 shadow-[0_22px_70px_rgba(15,23,42,0.12)] backdrop-blur-xl sm:p-8">
+          <div class="flex justify-center mb-4">
+            <div class="w-14 h-14 rounded-2xl bg-gradient-to-br from-orange-500 to-rose-500 text-white flex items-center justify-center text-2xl shadow-lg shadow-rose-500/25">
+              F
+            </div>
+          </div>
 
-    <!-- 🔐 LOGIN FORM -->
-    <form ng-show="isLogin" ng-submit="login()">
+          <h2 class="text-center text-3xl font-bold text-slate-950">
+            Welcome to FoodieHub
+          </h2>
+          <p class="text-center text-slate-500 text-sm mt-2 mb-6">
+            Login or create an account to continue
+          </p>
 
-      <input type="email" placeholder="Email"
-        class="w-full border p-2 mb-3 rounded"
-        ng-model="user.email" required>
+          <div class="flex rounded-full bg-slate-100 p-1 mb-6">
+            <button 
+              class="w-1/2 rounded-full py-2.5 text-sm font-semibold transition"
+              ng-class="isLogin ? 'bg-white text-slate-950 shadow-lg shadow-slate-200' : 'text-slate-500'"
+              ng-click="isLogin = true">
+              Login
+            </button>
 
-      <input type="password" placeholder="Password"
-        class="w-full border p-2 mb-3 rounded"
-        ng-model="user.password" required>
+            <button 
+              class="w-1/2 rounded-full py-2.5 text-sm font-semibold transition"
+              ng-class="!isLogin ? 'bg-white text-slate-950 shadow-lg shadow-slate-200' : 'text-slate-500'"
+              ng-click="isLogin = false">
+              Register
+            </button>
+          </div>
 
-      <button 
-        class="w-full bg-orange-500 text-white py-2 rounded hover:bg-orange-600">
-        Login
-      </button>
+          <form ng-show="isLogin" ng-submit="login()" class="space-y-4">
 
-    </form>
+            <input type="email" placeholder="Email"
+              class="surface-input"
+              ng-model="user.email" required>
 
-    <!-- 📝 REGISTER FORM -->
-    <form ng-show="!isLogin" ng-submit="register()">
+            <input type="password" placeholder="Password"
+              class="surface-input"
+              ng-model="user.password" required>
 
-      <input type="text" placeholder="Full Name"
-        class="w-full border p-2 mb-3 rounded"
-        ng-model="user.name" required>
+            <button 
+              class="primary-button w-full py-3">
+              Login
+            </button>
 
-      <input type="email" placeholder="Email"
-        class="w-full border p-2 mb-3 rounded"
-        ng-model="user.email" required>
+          </form>
 
-      <input type="password" placeholder="Password"
-        class="w-full border p-2 mb-3 rounded"
-        ng-model="user.password" required>
+          <form ng-show="!isLogin" ng-submit="register()" class="space-y-4">
 
-      <button 
-        class="w-full bg-green-500 text-white py-2 rounded hover:bg-green-600">
-        Create Account
-      </button>
+            <input type="text" placeholder="Full Name"
+              class="surface-input"
+              ng-model="user.name" required>
 
-    </form>
+            <input type="email" placeholder="Email"
+              class="surface-input"
+              ng-model="user.email" required>
+
+            <input type="password" placeholder="Password"
+              class="surface-input"
+              ng-model="user.password" required>
+
+            <button 
+              class="primary-button w-full py-3">
+              Create Account
+            </button>
+
+          </form>
+        </div>
+      </div>
+    </section>
 
   </div>
 

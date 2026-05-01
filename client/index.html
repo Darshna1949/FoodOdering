@@ -4,10 +4,366 @@
   <meta charset="UTF-8">
   <title>FoodieHub</title>
 
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@400;500;600;700;800&family=Space+Grotesk:wght@500;700&display=swap" rel="stylesheet">
+
   <!-- 🔥 Tailwind CSS -->
   <script src="https://cdn.tailwindcss.com"></script>
 
   <style>
+    :root {
+      --bg-0: #07111f;
+      --bg-1: #0f172a;
+      --bg-2: #1e293b;
+      --surface: rgba(255, 255, 255, 0.78);
+      --surface-strong: rgba(255, 255, 255, 0.9);
+      --text: #0f172a;
+      --muted: #64748b;
+      --primary: #ff7a18;
+      --primary-2: #ff4d6d;
+      --mint: #2dd4bf;
+      --sky: #38bdf8;
+      --ring: rgba(255, 122, 24, 0.24);
+    }
+
+    html {
+      scroll-behavior: smooth;
+    }
+
+    body {
+      margin: 0;
+      min-height: 100vh;
+      font-family: 'Outfit', sans-serif;
+      color: var(--text);
+      background:
+        radial-gradient(circle at 15% 20%, rgba(255, 122, 24, 0.22), transparent 25%),
+        radial-gradient(circle at 85% 12%, rgba(56, 189, 248, 0.2), transparent 22%),
+        radial-gradient(circle at 80% 82%, rgba(45, 212, 191, 0.18), transparent 24%),
+        linear-gradient(180deg, #f8fafc 0%, #eef2ff 48%, #f8fafc 100%);
+      overflow-x: hidden;
+    }
+
+    body::before,
+    body::after {
+      content: '';
+      position: fixed;
+      inset: auto;
+      width: 34rem;
+      height: 34rem;
+      border-radius: 999px;
+      pointer-events: none;
+      filter: blur(40px);
+      opacity: 0.35;
+      z-index: -2;
+      animation: float 18s ease-in-out infinite;
+    }
+
+    body::before {
+      top: -10rem;
+      left: -8rem;
+      background: radial-gradient(circle, rgba(255, 122, 24, 0.55), rgba(255, 122, 24, 0));
+    }
+
+    body::after {
+      bottom: -12rem;
+      right: -10rem;
+      background: radial-gradient(circle, rgba(56, 189, 248, 0.5), rgba(56, 189, 248, 0));
+      animation-delay: -7s;
+    }
+
+    body, button, input, textarea, select {
+      font-family: inherit;
+    }
+
+    h1, h2, h3, h4, .display-font {
+      font-family: 'Space Grotesk', sans-serif;
+    }
+
+    .app-shell {
+      position: relative;
+      min-height: 100vh;
+    }
+
+    .app-shell::before {
+      content: '';
+      position: fixed;
+      inset: 0;
+      pointer-events: none;
+      background-image: linear-gradient(rgba(15, 23, 42, 0.02) 1px, transparent 1px), linear-gradient(90deg, rgba(15, 23, 42, 0.02) 1px, transparent 1px);
+      background-size: 36px 36px;
+      mask-image: radial-gradient(circle at center, black 30%, transparent 88%);
+      opacity: 0.45;
+      z-index: -3;
+    }
+
+    .app-shell::after {
+      content: '';
+      position: fixed;
+      inset: 0;
+      pointer-events: none;
+      background: linear-gradient(180deg, rgba(255,255,255,0.25), rgba(255,255,255,0));
+      z-index: -1;
+    }
+
+    .page-shell {
+      position: relative;
+      z-index: 1;
+    }
+
+    .page-reveal {
+      animation: pageEnter 650ms cubic-bezier(0.2, 0.8, 0.2, 1) both;
+    }
+
+    .glass-card {
+      background: var(--surface);
+      border: 1px solid rgba(255, 255, 255, 0.45);
+      box-shadow: 0 24px 70px rgba(15, 23, 42, 0.12);
+      backdrop-filter: blur(18px);
+    }
+
+    .hero-panel {
+      position: relative;
+      overflow: hidden;
+      background:
+        linear-gradient(135deg, rgba(255, 255, 255, 0.88), rgba(255, 255, 255, 0.72)),
+        radial-gradient(circle at top left, rgba(255, 122, 24, 0.14), transparent 42%),
+        radial-gradient(circle at bottom right, rgba(56, 189, 248, 0.14), transparent 38%);
+      border: 1px solid rgba(255, 255, 255, 0.55);
+      box-shadow: 0 30px 90px rgba(15, 23, 42, 0.12);
+      backdrop-filter: blur(22px);
+    }
+
+    .hero-panel::before,
+    .hero-panel::after {
+      content: '';
+      position: absolute;
+      width: 14rem;
+      height: 14rem;
+      border-radius: 999px;
+      filter: blur(12px);
+      opacity: 0.45;
+      animation: float 12s ease-in-out infinite;
+      pointer-events: none;
+    }
+
+    .hero-panel::before {
+      top: -4rem;
+      right: -2rem;
+      background: radial-gradient(circle, rgba(255, 122, 24, 0.35), transparent 72%);
+    }
+
+    .hero-panel::after {
+      bottom: -5rem;
+      left: -3rem;
+      background: radial-gradient(circle, rgba(45, 212, 191, 0.28), transparent 72%);
+      animation-delay: -5s;
+    }
+
+    .section-kicker {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.5rem;
+      padding: 0.4rem 0.85rem;
+      border-radius: 999px;
+      background: rgba(15, 23, 42, 0.06);
+      color: var(--text);
+      font-size: 0.78rem;
+      font-weight: 700;
+      letter-spacing: 0.16em;
+      text-transform: uppercase;
+    }
+
+    .surface-input {
+      width: 100%;
+      border: 1px solid rgba(148, 163, 184, 0.25);
+      background: rgba(255, 255, 255, 0.86);
+      color: var(--text);
+      border-radius: 1rem;
+      padding: 0.95rem 1rem;
+      outline: none;
+      box-shadow: 0 10px 30px rgba(15, 23, 42, 0.06);
+      transition: transform 180ms ease, box-shadow 180ms ease, border-color 180ms ease;
+    }
+
+    .surface-input:focus {
+      border-color: rgba(255, 122, 24, 0.45);
+      box-shadow: 0 0 0 5px var(--ring);
+      transform: translateY(-1px);
+    }
+
+    .chip-button {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 0.45rem;
+      padding: 0.72rem 1rem;
+      border-radius: 999px;
+      border: 1px solid transparent;
+      font-weight: 700;
+      transition: transform 180ms ease, box-shadow 180ms ease, background 180ms ease, color 180ms ease;
+    }
+
+    .chip-button:hover {
+      transform: translateY(-2px);
+    }
+
+    .primary-button {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 0.6rem;
+      border: 0;
+      border-radius: 999px;
+      padding: 0.9rem 1.35rem;
+      color: white;
+      font-weight: 800;
+      background: linear-gradient(135deg, var(--primary), var(--primary-2));
+      box-shadow: 0 18px 30px rgba(255, 77, 109, 0.28);
+      transition: transform 180ms ease, box-shadow 180ms ease, filter 180ms ease;
+    }
+
+    .primary-button:hover {
+      transform: translateY(-2px) scale(1.01);
+      box-shadow: 0 24px 40px rgba(255, 77, 109, 0.34);
+      filter: saturate(1.05);
+    }
+
+    .secondary-button {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 0.6rem;
+      border: 1px solid rgba(148, 163, 184, 0.35);
+      border-radius: 999px;
+      padding: 0.9rem 1.2rem;
+      background: rgba(255, 255, 255, 0.88);
+      color: var(--text);
+      font-weight: 700;
+      transition: transform 180ms ease, box-shadow 180ms ease, border-color 180ms ease;
+    }
+
+    .secondary-button:hover {
+      transform: translateY(-2px);
+      border-color: rgba(255, 122, 24, 0.35);
+      box-shadow: 0 18px 30px rgba(15, 23, 42, 0.08);
+    }
+
+    .stat-tile {
+      position: relative;
+      overflow: hidden;
+      border-radius: 1.4rem;
+      border: 1px solid rgba(255, 255, 255, 0.55);
+      background: rgba(255, 255, 255, 0.72);
+      backdrop-filter: blur(14px);
+      box-shadow: 0 16px 36px rgba(15, 23, 42, 0.08);
+      transition: transform 180ms ease, box-shadow 180ms ease;
+    }
+
+    .stat-tile:hover {
+      transform: translateY(-3px);
+      box-shadow: 0 24px 44px rgba(15, 23, 42, 0.12);
+    }
+
+    .stat-tile::after {
+      content: '';
+      position: absolute;
+      inset: auto -20% -50% auto;
+      width: 8rem;
+      height: 8rem;
+      border-radius: 999px;
+      background: radial-gradient(circle, rgba(255, 122, 24, 0.22), transparent 70%);
+    }
+
+    .floating-orb {
+      position: absolute;
+      border-radius: 999px;
+      filter: blur(0.5px);
+      animation: float 14s ease-in-out infinite;
+      pointer-events: none;
+    }
+
+    .floating-orb.orb-a {
+      width: 7rem;
+      height: 7rem;
+      background: radial-gradient(circle, rgba(255, 122, 24, 0.36), transparent 72%);
+    }
+
+    .floating-orb.orb-b {
+      width: 9rem;
+      height: 9rem;
+      background: radial-gradient(circle, rgba(45, 212, 191, 0.28), transparent 70%);
+      animation-delay: -5s;
+    }
+
+    .floating-orb.orb-c {
+      width: 8rem;
+      height: 8rem;
+      background: radial-gradient(circle, rgba(56, 189, 248, 0.28), transparent 70%);
+      animation-delay: -8s;
+    }
+
+    .lift-card {
+      transition: transform 220ms ease, box-shadow 220ms ease;
+    }
+
+    .lift-card:hover {
+      transform: translateY(-6px);
+      box-shadow: 0 24px 50px rgba(15, 23, 42, 0.14);
+    }
+
+    .stagger-in {
+      animation: cardEnter 680ms cubic-bezier(0.2, 0.8, 0.2, 1) both;
+    }
+
+    .toast-shell {
+      border: 1px solid rgba(255, 255, 255, 0.4);
+      backdrop-filter: blur(18px);
+      box-shadow: 0 24px 50px rgba(15, 23, 42, 0.18);
+    }
+
+    @keyframes pageEnter {
+      from {
+        opacity: 0;
+        transform: translateY(18px) scale(0.985);
+      }
+      to {
+        opacity: 1;
+        transform: translateY(0) scale(1);
+      }
+    }
+
+    @keyframes cardEnter {
+      from {
+        opacity: 0;
+        transform: translateY(16px);
+      }
+      to {
+        opacity: 1;
+        transform: translateY(0);
+      }
+    }
+
+    @keyframes float {
+      0%, 100% {
+        transform: translate3d(0, 0, 0) scale(1);
+      }
+      50% {
+        transform: translate3d(0, -14px, 0) scale(1.05);
+      }
+    }
+
+    @media (prefers-reduced-motion: reduce) {
+      *, *::before, *::after {
+        animation-duration: 1ms !important;
+        animation-iteration-count: 1 !important;
+        transition-duration: 1ms !important;
+        scroll-behavior: auto !important;
+      }
+    }
+
     .toast-enter {
       opacity: 0;
       transform: translateY(-10px);
@@ -21,17 +377,21 @@
 
 </head>
 
-<body ng-app="foodApp" ng-controller="NavController" class="relative">
+<body ng-app="foodApp" ng-controller="NavController" class="relative app-shell">
+
+  <div class="floating-orb orb-a" style="top: 12vh; left: 4vw;"></div>
+  <div class="floating-orb orb-b" style="top: 42vh; right: 5vw;"></div>
+  <div class="floating-orb orb-c" style="bottom: 8vh; left: 18vw;"></div>
 
   <!-- Toast Notification -->
   <div ng-if="toast.visible"
-       class="fixed top-24 right-6 z-50 max-w-sm text-sm md:text-base"
+       class="fixed top-24 right-6 z-50 max-w-sm text-sm md:text-base toast-shell rounded-3xl overflow-hidden"
        ng-class="{
          'bg-green-500': toast.type === 'success',
          'bg-red-500': toast.type === 'error',
          'bg-gray-900': !toast.type || (toast.type !== 'success' && toast.type !== 'error')
        }">
-    <div class="flex items-center gap-3 px-5 py-4 rounded-2xl shadow-2xl text-white bg-opacity-90 backdrop-blur-sm">
+    <div class="flex items-center gap-3 px-5 py-4 text-white bg-opacity-90 backdrop-blur-sm">
       <div class="flex-1">
         <p class="font-semibold tracking-wide">{{toast.message}}</p>
       </div>
@@ -39,20 +399,26 @@
   </div>
 
   <!-- Navbar (hidden on login/register page) -->
-  <div class="flex justify-between items-center px-6 py-4 bg-white shadow" ng-if="shouldShowNavbar()">
-    <h2 class="text-xl font-bold text-orange-500 cursor-pointer" ng-click="goHome()">🍔 FoodieHub</h2>
+  <div class="flex justify-between items-center px-4 sm:px-6 py-4" ng-if="shouldShowNavbar()">
+    <button class="flex items-center gap-3 cursor-pointer text-left" ng-click="goHome()">
+      <span class="w-11 h-11 rounded-2xl bg-gradient-to-br from-orange-500 to-rose-500 text-white flex items-center justify-center text-xl shadow-lg shadow-orange-500/30">🍔</span>
+      <span>
+        <span class="block text-xs uppercase tracking-[0.28em] text-slate-500">FoodieHub</span>
+        <span class="block text-lg font-bold text-slate-900">Freshly delivered</span>
+      </span>
+    </button>
 
     <div class="flex items-center">
       <!-- Home Button -->
-      <button class="mr-4 text-sm font-medium text-gray-700 hover:text-orange-500" ng-click="goHome()">
+      <button class="chip-button mr-2 sm:mr-3 bg-white/70 text-slate-700 hover:bg-white" ng-click="goHome()">
         Home
       </button>
 
       <div class="relative mr-4">
-        <button class="text-xl" ng-click="goToCart()">🛒</button>
+        <button class="chip-button bg-white/75 text-slate-700" ng-click="goToCart()">🛒 Cart</button>
         <span 
           ng-if="cartCount > 0"
-          class="absolute -top-1 -right-2 bg-red-500 text-white text-xs rounded-full px-1">
+          class="absolute -top-2 -right-2 min-w-5 px-1.5 py-0.5 rounded-full bg-rose-500 text-white text-[10px] font-bold text-center shadow-lg shadow-rose-500/30">
           {{cartCount}}
         </span>
       </div>
@@ -60,33 +426,33 @@
       <!-- Show Login before auth, Profile dropdown after auth -->
       <button 
         ng-if="!isLoggedIn"
-        class="bg-black text-white px-4 py-1 rounded" 
+        class="primary-button px-4 py-2 text-sm" 
         ng-click="goToLogin()">
         Login
       </button>
 
       <div class="relative" ng-if="isLoggedIn">
         <button 
-          class="w-9 h-9 flex items-center justify-center rounded-full bg-gray-200 text-gray-800 text-lg" 
+          class="w-11 h-11 flex items-center justify-center rounded-2xl bg-white/80 text-gray-800 text-lg shadow-md shadow-slate-200" 
           ng-click="toggleProfileMenu()">
           👤
         </button>
 
         <div 
-          class="absolute right-0 mt-2 w-44 bg-white border border-gray-200 rounded-lg shadow-lg z-30"
+          class="absolute right-0 mt-3 w-52 glass-card rounded-2xl z-30 overflow-hidden"
           ng-show="showProfileMenu">
           <button 
-            class="block w-full text-left px-4 py-2 text-sm text-gray-700 hover:bg-gray-100" 
+            class="block w-full text-left px-4 py-3 text-sm text-slate-700 hover:bg-white/70" 
             ng-click="goToProfile()">
             Profile
           </button>
           <button 
-            class="block w-full text-left px-4 py-2 text-sm text-gray-700 hover:bg-gray-100" 
+            class="block w-full text-left px-4 py-3 text-sm text-slate-700 hover:bg-white/70" 
             ng-click="goToOrders()">
             Order History
           </button>
           <button 
-            class="block w-full text-left px-4 py-2 text-sm text-red-600 hover:bg-gray-100" 
+            class="block w-full text-left px-4 py-3 text-sm text-rose-600 hover:bg-rose-50" 
             ng-click="logout()">
             Logout
           </button>
@@ -96,7 +462,9 @@
   </div>
 
   <!-- Angular View -->
-  <div ng-view></div>
+  <main class="page-shell px-3 sm:px-4 lg:px-6 pb-8">
+    <div ng-view></div>
+  </main>
 
   <!-- 🔹 AngularJS -->
   <script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.8.2/angular.min.js"></script>

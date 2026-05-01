@@ -1,18 +1,58 @@
 app.controller('FoodController', function($scope, $location, FoodService, CartService, AuthService, ToastService) {
 
+    var backendBaseUrl = 'http://localhost:5000';
+
     $scope.foods = [];
     $scope.allFoods = [];
+    $scope.categoryList = ['All'];
     $scope.searchText = "";
     $scope.activeCategory = "All";
     $scope.cartCount = CartService.getCartCount();
     $scope.isLoggedIn = AuthService.isAuthenticated();
 
     function getImage(name, backendImage) {
-        // Prefer backend image if it's a valid URL, otherwise fallback to Unsplash
-        if (backendImage && backendImage.indexOf('http') === 0) {
+        // Prefer backend image when provided. Support full URLs, protocol-relative URLs,
+        // relative upload paths, and data/blob URLs; only fall back when no image exists.
+        if (!backendImage) {
+            return "https://source.unsplash.com/400x300/?food," + name;
+        }
+
+        if (backendImage.indexOf('http://') === 0 || backendImage.indexOf('https://') === 0 ||
+            backendImage.indexOf('//') === 0 || backendImage.indexOf('data:') === 0 ||
+            backendImage.indexOf('blob:') === 0) {
             return backendImage;
         }
-        return "https://source.unsplash.com/400x300/?food," + name;
+
+        if (backendImage.charAt(0) === '/') {
+            return backendBaseUrl + backendImage;
+        }
+
+        return backendBaseUrl + '/' + backendImage.replace(/^\.\//, '');
+    }
+
+    function normalizeCategory(value) {
+        return (value || '').toString().trim();
+    }
+
+    function buildCategories(list) {
+        var seen = {};
+        var categories = ['All'];
+
+        (list || []).forEach(function(item) {
+            var category = normalizeCategory(item.category);
+
+            if (!category) {
+                return;
+            }
+
+            var key = category.toLowerCase();
+            if (!seen[key]) {
+                seen[key] = true;
+                categories.push(category);
+            }
+        });
+
+        $scope.categoryList = categories;
     }
 
     FoodService.getFoods()
@@ -27,11 +67,13 @@ app.controller('FoodController', function($scope, $location, FoodService, CartSe
                     name: item.name,
                     price: item.price,
                     description: item.description,
-                    category: item.category,
+                    category: normalizeCategory(item.category),
                     type: item.type || '',
                     image: getImage(item.name, item.image)
                 };
             });
+
+            buildCategories($scope.allFoods);
 
             // initial view
             $scope.foods = $scope.allFoods;
@@ -68,11 +110,13 @@ app.controller('FoodController', function($scope, $location, FoodService, CartSe
 
         if ($scope.activeCategory && $scope.activeCategory !== 'All') {
             filtered = filtered.filter(function(item) {
-                if (!item.category) {
+                var itemCategory = normalizeCategory(item.category);
+
+                if (!itemCategory) {
                     return false;
                 }
 
-                var cat = (item.category || '').toLowerCase().trim();
+                var cat = itemCategory.toLowerCase();
                 var active = ($scope.activeCategory || '').toLowerCase().trim();
 
                 // Match if the stored category contains the active label,
@@ -95,6 +139,10 @@ app.controller('FoodController', function($scope, $location, FoodService, CartSe
     $scope.setCategory = function(category) {
         $scope.activeCategory = category;
         applyFilters();
+    };
+
+    $scope.isActiveCategory = function(category) {
+        return ($scope.activeCategory || '').toLowerCase().trim() === (category || '').toLowerCase().trim();
     };
 
     $scope.onSearchChange = function() {
